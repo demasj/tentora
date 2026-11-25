@@ -1,0 +1,1809 @@
+{
+  "title": "Databricks Certified Data Engineer Associate (generated)",
+  "exam": "data-engineer-associate",
+  "source": "json",
+  "generatedAt": "2026-11-22T19:16:36+00:00",
+  "guideVersion": "2026-08-06",
+  "timeLimitMinutes": 90,
+  "passingScore": 80,
+  "sections": [
+    {
+      "name": "Databricks Intelligence Platform",
+      "weight": 6
+    },
+    {
+      "name": "Data Ingestion and Loading",
+      "weight": 21
+    },
+    {
+      "name": "Data Transformation and Modeling",
+      "weight": 22
+    },
+    {
+      "name": "Working with Lakeflow Jobs",
+      "weight": 16
+    },
+    {
+      "name": "Implementing CI/CD",
+      "weight": 10
+    },
+    {
+      "name": "Troubleshooting, Monitoring, and Optimization",
+      "weight": 10
+    },
+    {
+      "name": "Governance and Security",
+      "weight": 15
+    }
+  ],
+  "questions": [
+    {
+      "type": "multiple",
+      "objective": "1.1",
+      "prompt": "A data governance lead is reviewing a Databricks workspace that was created in 2025. The lead wants to know what Unity Catalog does on its own, without the team building extra tooling.\n\nWhich TWO statements about Unity Catalog are correct? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Unity Catalog automatically tracks lineage as data and AI assets are used, from source data through to models and dashboards.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Unity Catalog keeps a record of data access and system activity in the audit log system table.",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "Unity Catalog must be enabled manually by an account admin before the workspace can use it, because it is off by default for all workspaces.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Unity Catalog governs only tables and views. Volumes, functions, and models need a separate governance service.",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "Lineage appears in Unity Catalog only after each pipeline explicitly registers its source and target tables through the REST API.",
+          "correct": false
+        }
+      ],
+      "explanation": "The documentation says Unity Catalog works beneath every data and AI interaction. It automatically enforces access control, tracks lineage as assets are used, and logs activity for auditing in the audit log system table. Both (a) and (b) are therefore correct. Option (c) is wrong because Unity Catalog is enabled automatically for workspaces created after November 8, 2023, and this workspace was created in 2025. Option (d) is wrong because tables, views, volumes, functions, models, and services are all securable objects in the catalog.schema.object namespace. Option (e) is wrong because lineage is tracked automatically, with no manual registration.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/data-governance/unity-catalog/"
+      ],
+      "section": "Databricks Intelligence Platform",
+      "verification": {
+        "status": "confirmed",
+        "note": "The page says Unity Catalog tracks lineage automatically and logs activity via the audit log system table. It is auto-enabled for workspaces created after Nov 8, 2023, and it governs tables, volumes, functions, models and services.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q1"
+    },
+    {
+      "type": "single",
+      "objective": "1.1",
+      "prompt": "A data engineer creates a table by calling df.write.saveAsTable(\"main.sales.orders\") and does not specify a format. A week later, a job tries to append a DataFrame to this table. The DataFrame has an extra column, discount_pct, that the table does not have, and the append fails with a schema mismatch error.\n\nWhat explains this behaviour, and how should the engineer let the table accept the new column?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The table was created as a Delta Lake table, the default format, and Delta Lake validates schema on write. The engineer should use schema evolution to update the table schema so it includes the new column.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "The table was created as a plain Parquet table because no format was given. The engineer should convert it to Delta Lake, because Delta Lake accepts any incoming columns without validation.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "The append failed because the transaction log is locked. The engineer should edit the JSON files in the table's _delta_log directory to add the column definition.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Unity Catalog blocks every schema change on managed tables. The engineer must drop the table and recreate it with the new column.",
+          "correct": false
+        }
+      ],
+      "explanation": "Delta Lake is the default format on Databricks, so unless you specify otherwise, every table is a Delta Lake table. Delta Lake validates schema on write (schema enforcement), which is why a write with a column the table doesn't have is rejected. To add the column, the engineer uses schema evolution, which updates the table schema manually or automatically without rewriting data. Option (b) is wrong on both points: the table is already Delta, and Delta enforces schema instead of accepting any columns. Option (c) is wrong because Databricks recommends against touching data or transaction log files directly, since doing so can corrupt the table. Option (d) is wrong because schema evolution supports schema changes without recreating the table.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/delta/"
+      ],
+      "section": "Databricks Intelligence Platform",
+      "verification": {
+        "status": "confirmed",
+        "note": "The Delta page says Delta Lake is the default format, validates schema on write, and supports schema evolution without rewriting data. It also says to avoid touching transaction log files directly.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q2"
+    },
+    {
+      "type": "single",
+      "objective": "1.2",
+      "prompt": "A platform engineer writes an automation script that creates SQL warehouses with the SQL warehouses API. The workspace is in a region that supports serverless SQL warehouses and meets all the requirements. The script passes only a name and a cluster size and leaves every other parameter at its default. When colleagues create warehouses in the UI, they get serverless warehouses, but the script's warehouses start slowly and show the label \"Classic.\"\n\nWhat should the engineer change so the script creates serverless SQL warehouses?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Set enable_serverless_compute to true and warehouse_type to pro in the API request.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Nothing in the request needs to change. Ask a workspace admin to enable serverless in the workspace, and the API will then default to serverless like the UI.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Set warehouse_type to serverless and leave enable_serverless_compute at its default.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Attach the warehouses to an instance pool, which turns them into serverless warehouses.",
+          "correct": false
+        }
+      ],
+      "explanation": "The documentation says the default warehouse type is serverless when you create a warehouse in the UI. When you use the SQL warehouses API with default parameters, the default is classic. To create a serverless warehouse through the API, you set enable_serverless_compute to true and warehouse_type to pro. Databricks recommends always setting this field explicitly. Option (b) is wrong because the workspace already supports serverless; the API default differs from the UI default regardless. Option (c) is wrong because the documented API settings are enable_serverless_compute=true together with warehouse_type=pro. Option (d) is wrong because instance pools are a classic compute feature, and serverless compute does not support them.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/compute/sql-warehouse/warehouse-types",
+        "https://docs.databricks.com/aws/en/compute/serverless/limitations"
+      ],
+      "section": "Databricks Intelligence Platform",
+      "verification": {
+        "status": "confirmed",
+        "note": "The warehouse-types page says the API default is classic and that serverless needs enable_serverless_compute=true with warehouse_type=pro. The limitations page says instance pools are not supported on serverless.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q3"
+    },
+    {
+      "type": "single",
+      "objective": "2.3",
+      "prompt": "A data engineer uses Auto Loader to ingest JSON files into a Unity Catalog table. cloudFiles.schemaLocation is set. The source path was laid out Hive-style as base_path/event=click/date=2026-11-01/f0.json, and Auto Loader inferred event and date as partition columns. The source system now writes files to base_path/event=click/date=2026-11-01/hour=01/f1.json. The engineer finds that the table has no hour column.\n\nWhat should the engineer do so that hour is captured?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Set cloudFiles.partitionColumns to \"event,date,hour\"",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Set cloudFiles.schemaEvolutionMode to addNewColumns so the stream adds hour to the schema the next time it restarts",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Query the _rescued_data column, because Auto Loader places new partition values there",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Set cloudFiles.inferColumnTypes to true so Auto Loader infers the new directory level as a column",
+          "correct": false
+        }
+      ],
+      "explanation": "Auto Loader does not consider partition columns for schema evolution. If a new directory level such as hour=01 appears after the first inference, Auto Loader ignores it. To capture it, set cloudFiles.partitionColumns to a comma-separated list of column names, such as event,date,hour. Auto Loader only parses columns that exist as key=value pairs in the directory structure.\n\nWhy the other options are wrong:\n- addNewColumns applies to new columns inside the data files, not to new partition directories.\n- Ignored partition columns are not written to the rescued data column.\n- inferColumnTypes only controls whether JSON, CSV and XML columns get typed instead of STRING. It does not detect partitions.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/schema"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "Schema page says Auto Loader ignores new partition columns like hour and you must set cloudFiles.partitionColumns to e.g. event,date,hour.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q4"
+    },
+    {
+      "type": "multiple",
+      "objective": "2.3",
+      "prompt": "A data engineer runs an Auto Loader stream in the default directory listing mode. The stream reads files from a Unity Catalog volume into a Unity Catalog table. To improve performance, the engineer plans to move the stream to file notification mode.\n\nWhich TWO statements are correct? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The engineer can switch file detection modes when the stream restarts, and Auto Loader still keeps its exactly-once processing guarantees.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "For a Unity Catalog volume source, file notification mode is supported only with file events, on Databricks Runtime 14.3 LTS and above.",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "File notification mode without file events works on Unity Catalog volumes in all Databricks Runtime versions.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Switching modes requires deleting the checkpoint and reprocessing every file in the volume.",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "Once the stream uses file notification mode, Auto Loader processes files in the exact order they arrive.",
+          "correct": false
+        }
+      ],
+      "explanation": "Correct answers:\n- Auto Loader lets you switch file discovery modes across stream restarts and still obtain exactly-once processing guarantees.\n- The support table lists Unity Catalog volumes as 'Unsupported' for file notifications without file events, and as supported with file events on Databricks Runtime 14.3 LTS and above.\n\nWhy the other options are wrong:\n- File notifications without file events are unsupported for Unity Catalog volumes.\n- You do not need to delete the checkpoint to switch modes.\n- Auto Loader does not guarantee the order in which files are discovered or processed, in either mode.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/file-detection-modes"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "Pages state mode switching across restarts keeps exactly-once, UC volumes are unsupported for notifications without file events and need DBR 14.3+ with file events, and file order isn't guaranteed.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q5"
+    },
+    {
+      "type": "single",
+      "objective": "2.4",
+      "prompt": "A platform team deploys all Lakeflow Connect ingestion pipelines with Declarative Automation Bundles. Each pipeline's Unity Catalog connection is created in a pre-deploy script that runs databricks connections create --json. This works for the SQL Server connection. For the HubSpot managed connector, however, the team cannot create the connection this way.\n\nWhat explains this, and how should the team proceed?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "HubSpot supports only browser-based OAuth (U2M), which needs an interactive sign-in to get the first token. Someone must create the connection interactively, for example in Catalog Explorer. The ingestion pipeline itself can still be deployed with the bundle.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "The team should put an OAuth M2M client ID and client secret for HubSpot in the JSON body. M2M lets every SaaS connector create connections programmatically.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Declarative Automation Bundles cannot deploy SaaS ingestion pipelines, so the whole HubSpot pipeline must be built in the UI.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The team should store a Databricks personal access token in the connection, because SaaS connectors authenticate to the source with Databricks tokens.",
+          "correct": false
+        }
+      ],
+      "explanation": "Correct answer (a): The docs explain that connectors whose only authentication option is browser-based OAuth (OAuth U2M) cannot be created programmatically, because they need an interactive sign-in to get the initial OAuth token. HubSpot is listed among these connectors.\n\nWhy the other options are wrong:\n- (b) Programmatic creation with M2M only works if the connector supports M2M, and HubSpot does not.\n- (c) Declarative Automation Bundles can deploy ingestion pipelines.\n- (d) The connection stores the source application's authentication details, not a Databricks personal access token.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "Lakeflow Connect page lists HubSpot among connectors with only browser-based OAuth U2M that cannot be created programmatically, and says pipelines can be deployed with bundles.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q6"
+    },
+    {
+      "type": "single",
+      "objective": "2.4",
+      "prompt": "A data engineer adds a daily schedule to a Lakeflow Connect managed ingestion pipeline that loads Workday HCM data into Unity Catalog streaming tables. Each day, a notebook that builds aggregated HR tables must run only after that day's ingestion finishes.\n\nWhat is the most direct way to set this up?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Add a notebook task to the job that Lakeflow Connect created for the schedule, and make it depend on the ingestion pipeline task.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Add the notebook to the ingestion pipeline's source code so it runs as part of the managed connector.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Create a separate job that polls the destination tables every few minutes, because managed ingestion pipelines cannot be tasks in a job.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Add the notebook to the ingestion gateway's continuous job so it runs right after changes are captured.",
+          "correct": false
+        }
+      ],
+      "explanation": "Correct answer (a): For each schedule added to an ingestion pipeline, Lakeflow Connect automatically creates a job, and the ingestion pipeline is a task within that job. You can optionally add more tasks, so a dependent notebook task is the direct solution.\n\nWhy the other options are wrong:\n- (b) A managed connector's ingestion pipeline is not where you add custom notebook logic.\n- (c) Ingestion pipelines can be job tasks, so polling is unnecessary.\n- (d) Workday is a SaaS connector and has no ingestion gateway. Gateways exist only for database connectors.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/",
+        "https://docs.databricks.com/aws/en/jobs/"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "Each schedule creates a job with the ingestion pipeline as a task, and more tasks can be added; the gateway job applies only to database connectors.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q7"
+    },
+    {
+      "type": "single",
+      "objective": "2.5",
+      "prompt": "A data engineer has a Python script that uses the Databricks SQL Connector for Python to run INSERT and MERGE statements against Unity Catalog tables. To save cost, the engineer wants to point the script at the jobs compute cluster that a Lakeflow Jobs job already uses, and plans to copy that cluster's HTTP path into the connection settings.\n\nWhat should the engineer do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Use a SQL warehouse or all-purpose compute instead. The SQL connector does not support jobs compute. Take the Server Hostname and HTTP Path from that resource's connection details.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Copy the jobs cluster's Server Hostname and HTTP Path from its JDBC/ODBC tab. Any compute type works once these values are set.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Switch to OAuth U2M authentication, because jobs compute accepts only interactive sign-in.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Install databricks-sql-connector[pyarrow], which enables connections to jobs compute.",
+          "correct": false
+        }
+      ],
+      "explanation": "Correct answer (a): The Databricks SQL Connector for Python runs SQL on all-purpose compute and SQL warehouses, and the docs state that it does not support connecting to jobs compute. The engineer needs the Server Hostname and HTTP Path from a SQL warehouse's Connection Details tab, or from the JDBC/ODBC tab of an all-purpose cluster.\n\nWhy the other options are wrong:\n- (b) Setting the hostname and HTTP path does not make jobs compute supported.\n- (c) The authentication type has nothing to do with compute type support.\n- (d) PyArrow enables CloudFetch and Arrow features, not jobs compute connections.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/dev-tools/python-sql-connector"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "The SQL connector page notes it does not support connecting to jobs compute.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q8"
+    },
+    {
+      "type": "single",
+      "objective": "2.5",
+      "prompt": "A team upgrades the Databricks SQL Connector for Python to version 4.x on the server that runs its nightly extraction. The server installs the package with pip install databricks-sql-connector. Since the upgrade, queries that fetch large result sets from a SQL warehouse are much slower, and features based on CloudFetch are no longer available.\n\nWhat is the most likely cause and fix?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Starting with version 4.0.0, PyArrow is an optional dependency that is not installed by default. Install databricks-sql-connector[pyarrow] to get CloudFetch and Arrow features back.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Version 4.x stopped supporting SQL warehouses. Point the connection at all-purpose compute instead.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Native parameterized queries turn off CloudFetch. Go back to inline parameters.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Large result sets need the Databricks SDK for Python. Install databricks-sdk so CloudFetch is enabled.",
+          "correct": false
+        }
+      ],
+      "explanation": "Correct answer (a): In version 4.0.0 and above, PyArrow is optional and not installed by default. Without it, CloudFetch and other Apache Arrow features are not available, which can hurt performance for large volumes of data. pip install databricks-sql-connector[pyarrow] installs the complete connector.\n\nWhy the other options are wrong:\n- (b) The connector still supports SQL warehouses.\n- (c) Native parameters, from version 3.0.0, prevent SQL injection and have no link to CloudFetch. Inline parameters are unsafe.\n- (d) The Databricks SDK is needed for OAuth M2M authentication, not for CloudFetch.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/dev-tools/python-sql-connector"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "Page says PyArrow is not installed by default in 4.0.0+, so CloudFetch and Arrow features are unavailable without the [pyarrow] extra.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q9"
+    },
+    {
+      "type": "single",
+      "objective": "2.6",
+      "prompt": "A company wants to ingest several tables from an operational PostgreSQL database into Unity Catalog streaming tables on a schedule, using a Lakeflow Connect managed option. The database team refuses to enable change data capture (CDC) on the source. The team also does not want to run classic compute or staging storage for an ingestion gateway.\n\nWhich option best fits these requirements?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A Lakeflow Connect query-based connector, which queries the source database directly on a schedule without a gateway or staging storage.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "The Lakeflow Connect managed PostgreSQL database connector, with an ingestion gateway running continuously on classic compute.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Auto Loader in file notification mode pointed at the PostgreSQL server.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The Create or modify a table using file upload page, loading nightly CSV exports of each table.",
+          "correct": false
+        }
+      ],
+      "explanation": "Correct answer (a): Query-based connectors ingest from databases by querying the source directly, without requiring CDC configuration. They use only a connection, an ingestion pipeline that runs on serverless compute by default, and destination streaming tables. There is no gateway or staging storage.\n\nWhy the other options are wrong:\n- (b) The managed database connectors use CDC, plus a continuously running gateway on classic compute and staging storage.\n- (c) Auto Loader reads files from cloud object storage and volumes, not databases.\n- (d) File upload is a manual UI for small local files, not a scheduled pipeline.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/",
+        "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/cdc-overview"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "Query-based connectors query the source directly without CDC, gateway or staging storage, while managed database connectors use CDC with a gateway on classic compute.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q10"
+    },
+    {
+      "type": "multiple",
+      "objective": "2.6",
+      "prompt": "A data team must ingest data from a niche industry SaaS application into Unity Catalog-governed tables. Lakeflow Connect has no managed connector for this application. The team wants to keep using Lakeflow Connect instead of writing a fully custom Structured Streaming job.\n\nWhich TWO options does Lakeflow Connect provide for this situation? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Use a community connector, which is open source, built by the community and maintained by the community, if one exists for the source.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Build a custom connector for Lakeflow Connect and run it in the workspace.",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "Configure a managed database CDC connector with an ingestion gateway that points at the application's REST API.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Pick any managed SaaS connector. Managed SaaS connectors detect and adapt to any REST API automatically.",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "Use Partner Connect, which turns the source into a Databricks-maintained Lakeflow Connect managed connector.",
+          "correct": false
+        }
+      ],
+      "explanation": "Correct answers (a, b): Community connectors extend Lakeflow Connect to sources that have no managed connector, and they are built and maintained by the community. If no managed or community connector supports the source, you can build your own custom connector and run it in your workspace.\n\nWhy the other options are wrong:\n- (c) Database CDC connectors are for relational databases such as MySQL, PostgreSQL, SQL Server and Oracle, not REST APIs.\n- (d) Each managed SaaS connector handles authentication and incremental reads for its own specific source.\n- (e) Partner Connect links the workspace to a third-party partner solution. It does not create Lakeflow Connect managed connectors.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/",
+        "https://docs.databricks.com/aws/en/partner-connect/ingestion"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "Page describes community connectors for sources without managed support and building custom connectors when none exists.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q11"
+    },
+    {
+      "type": "single",
+      "objective": "2.1",
+      "prompt": "A data engineer creates a Lakeflow Connect managed ingestion pipeline that loads several SQL Server tables into Unity Catalog streaming tables, and schedules it to run every hour.\n\nWhich statement describes how the pipeline ingests data across its runs?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The first run ingests all of the selected data and tracks source changes in parallel. Later runs use that change tracking to ingest, where possible, only the data that changed since the previous run.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Every run takes a full snapshot of each selected table and overwrites the destination tables.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "The first run ingests only rows created after the pipeline was set up. Historical data must be loaded separately with COPY INTO.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Every source and table supports incremental ingestion, so no table ever needs a full reload.",
+          "correct": false
+        }
+      ],
+      "explanation": "Correct answer (a): Lakeflow Connect uses incremental ingestion. On the first run it ingests all selected data and, in parallel, tracks changes. Each later run uses that tracking to ingest only the changed data, when possible. For SQL Server, both change tracking and CDC can be used.\n\nWhy the other options are wrong:\n- (b) Lakeflow Connect does not take a full snapshot and overwrite the tables on every run.\n- (c) The first run does include historical data.\n- (d) The docs say some sources or specific tables do not yet support incremental ingestion.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "Incremental ingestion section: first run ingests everything while tracking changes, later runs ingest only changes where possible, and some sources or tables don't support it.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q12"
+    },
+    {
+      "type": "single",
+      "objective": "3.6",
+      "prompt": "A data engineer defines a Gold materialized view `sales_by_country` in a Lakeflow Declarative Pipeline. The view joins two silver tables and aggregates the result. The pipeline runs on classic compute. Only a small share of the source rows change between runs, but every pipeline update reprocesses all of the source data. What is the most likely reason?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Incremental refresh of materialized views requires serverless compute. On classic compute, a materialized view is fully recomputed on each update.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Materialized views never refresh incrementally. Only streaming tables can process just the changed data.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "A query that contains a join can never be maintained incrementally, so it is always fully recomputed on any compute type.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Materialized views must be refreshed by a second pipeline. If the defining pipeline updates the view, the whole view is rebuilt.",
+          "correct": false
+        }
+      ],
+      "explanation": "The documentation says incremental refresh requires serverless compute, and on classic compute a materialized view is fully recomputed on each update. Option b is wrong because materialized views often refresh incrementally: Databricks tries to process only the data that must be processed. Option c is wrong because the docs show a joined and grouped materialized view (sales_report) that is updated incrementally. Some computations cannot be incremental, but joins are not ruled out as a group. Option d is wrong because a single pipeline defines and updates a materialized view, and no other pipeline can update tables that a pipeline defines.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ldp/concepts/materialized-views"
+      ],
+      "section": "Data Transformation and Modeling",
+      "verification": {
+        "status": "confirmed",
+        "note": "The page says incremental refresh requires serverless compute and that on classic compute a materialized view is fully recomputed on each update.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q13"
+    },
+    {
+      "type": "single",
+      "objective": "3.6",
+      "prompt": "A streaming table in a Lakeflow Declarative Pipeline has been loading customer records for months with the expression `SELECT LOWER(name) AS name, ...`. A data engineer changes the query to `SELECT UPPER(name) AS name, ...` and runs a normal (not full refresh) pipeline update. What happens to the data in the streaming table?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "All existing rows are reprocessed automatically, so every name becomes uppercase.",
+          "correct": false
+        },
+        {
+          "id": "b",
+          "text": "Rows that were already loaded keep their lowercase names. Only newly processed rows are uppercase. A full refresh is needed to reprocess all earlier rows.",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "The update fails because the query of a streaming table cannot be changed once it has been created.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The streaming table is converted to a materialized view so that the new expression can be applied to all rows.",
+          "correct": false
+        }
+      ],
+      "explanation": "A streaming table processes each input row only once. Rows that were already appended are not queried again when the query changes, so existing rows stay lowercase and new rows are uppercase. To reprocess earlier rows, you trigger a full refresh. Option a describes materialized view behaviour, not streaming tables. Option c is wrong because the docs say you can change the query without recomputing the whole dataset. Option d is wrong because no automatic conversion between object types takes place.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ldp/concepts/streaming-tables"
+      ],
+      "section": "Data Transformation and Modeling",
+      "verification": {
+        "status": "confirmed",
+        "note": "The page says existing rows are not updated when the query changes (LOWER to UPPER), and a full refresh is needed to reprocess them.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q14"
+    },
+    {
+      "type": "multiple",
+      "objective": "3.6",
+      "prompt": "A BI team needs a Gold dataset that joins silver sales facts to a customer dimension. Customer attributes are sometimes corrected after sales are loaded. The data engineer is deciding between a streaming table and a materialized view in Unity Catalog. Which TWO statements are correct? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A materialized view automatically recomputes the join when the dimension changes, so its result is correct as of each update.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "A streaming table that joins to the dimension recomputes previously written rows whenever a customer record is corrected.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "If the engineer creates the materialized view as a standalone object outside a pipeline, Databricks creates a pipeline to update it, and that pipeline has the type MV/ST.",
+          "correct": true
+        },
+        {
+          "id": "d",
+          "text": "A materialized view defined in one pipeline can also be updated by a second pipeline that owns the same schema.",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "The materialized view can be shallow cloned to give the BI team a cheap sandbox copy.",
+          "correct": false
+        }
+      ],
+      "explanation": "Correct (a): materialized views are always correct as of their last update because they automatically recompute joins when dimensions change. Correct (c): when you create a standalone materialized view, Databricks creates a pipeline to update it, and Jobs & Pipelines lists that pipeline with the type MV/ST. Wrong (b): joins in streaming tables do not recompute when dimensions change, which the docs describe as 'fast-but-wrong'. Wrong (d): tables defined by a pipeline can't be changed or updated by any other pipeline. Wrong (e): materialized views do not support CLONE, either as a source or as a target.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ldp/concepts/materialized-views",
+        "https://docs.databricks.com/aws/en/ldp/concepts/streaming-tables"
+      ],
+      "section": "Data Transformation and Modeling",
+      "verification": {
+        "status": "confirmed",
+        "note": "The docs say materialized views recompute joins when dimensions change, standalone ones get a pipeline of type MV/ST, streaming-table joins don't recompute, pipeline-defined tables can't be updated by other pipelines, and MVs don't support CLONE.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q15"
+    },
+    {
+      "type": "single",
+      "objective": "3.1",
+      "prompt": "A data engineer is designing the ingestion of JSON events from Kafka. To save a step, a teammate suggests writing the Kafka stream directly into the cleaned silver table with typed columns, without a bronze table. Which approach matches Databricks medallion architecture recommendations?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Write directly to silver, because cleaning data as early as possible reduces storage cost and avoids duplicate data.",
+          "correct": false
+        },
+        {
+          "id": "b",
+          "text": "Ingest the raw data into a bronze table with minimal validation, storing most fields as STRING, VARIANT or binary. Then build the silver table with a streaming read from bronze, where cleaning and type casting take place.",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "Ingest into bronze, but apply full schema enforcement, deduplication and type casting there, so the silver table is a simple copy of bronze.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Ingest into bronze, then build silver with a batch read of the entire bronze table on every run, because streaming reads from bronze are not recommended.",
+          "correct": false
+        }
+      ],
+      "explanation": "Databricks does not recommend writing to silver tables directly from ingestion, because schema changes or corrupt source records would cause failures. The bronze layer does minimal validation, and Databricks recommends storing most fields as STRING, VARIANT or binary there. Silver tables are built by reading from bronze, and for append-only sources most of these reads should be streaming reads. Option a contradicts that guidance. Option c moves silver-layer work (deduplication, type casting, schema enforcement) into bronze. Option d is wrong because the docs say to reserve batch reads for small datasets such as dimension tables.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/lakehouse/medallion"
+      ],
+      "section": "Data Transformation and Modeling",
+      "verification": {
+        "status": "confirmed",
+        "note": "The medallion page recommends minimal validation in bronze, storing fields as string/VARIANT/binary, not writing to silver directly from ingestion, and mostly streaming reads from bronze.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q16"
+    },
+    {
+      "type": "single",
+      "objective": "3.1",
+      "prompt": "A PySpark DataFrame `df_bronze` read from a bronze table has a column `c_acctbal` stored as a string. For the silver table, the data engineer wants the same column name but with a DOUBLE data type. Which code does this?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "`df_silver = df_bronze.withColumnRenamed(\"c_acctbal\", \"double\")`",
+          "correct": false
+        },
+        {
+          "id": "b",
+          "text": "`df_silver = df_bronze.withColumn(\"c_acctbal\", col(\"c_acctbal\").cast(DoubleType()))`",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "`df_silver = df_bronze.drop(\"c_acctbal\").cast(DoubleType())`",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "`df_silver = df_bronze.select(col(\"c_acctbal\").alias(\"DOUBLE\"))`",
+          "correct": false
+        }
+      ],
+      "explanation": "To change a column's data type in PySpark, use the column's cast method inside withColumn. Passing the existing column name replaces that column with the cast version. Option a only renames the column to 'double' and leaves its type unchanged. Option c removes the column, and cast is a Column method, not a DataFrame method. Option d only gives the column an alias, does not change its type, and drops every other column.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/pyspark/basics"
+      ],
+      "section": "Data Transformation and Modeling",
+      "verification": {
+        "status": "confirmed",
+        "note": "The PySpark basics page shows changing a column type with withColumn and col().cast(), and the other options only rename, drop or alias.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q17"
+    },
+    {
+      "type": "single",
+      "objective": "3.2",
+      "prompt": "Table `orders` has the columns (order_id, line_no, qty). Table `returns` has the columns (order_id, line_no, reason). A data engineer runs:\n\n`SELECT * FROM orders JOIN returns USING (order_id, line_no)`\n\nWhich columns does the result contain, in order?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "order_id, line_no, qty, order_id, line_no, reason",
+          "correct": false
+        },
+        {
+          "id": "b",
+          "text": "order_id, line_no, qty, reason",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "qty, reason, order_id, line_no",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The query fails with AMBIGUOUS_COLUMN_REFERENCE because both tables contain order_id and line_no.",
+          "correct": false
+        }
+      ],
+      "explanation": "With USING, SELECT * shows each join column only once and puts them first. The remaining columns of the left table follow, then the remaining columns of the right table. The result is therefore order_id, line_no, qty, reason, which is the same as `SELECT orders.order_id, orders.line_no, orders.* EXCEPT(order_id, line_no), returns.* EXCEPT(order_id, line_no)`. Option a describes joining with ON, not USING. Option c has the wrong column order. Option d is wrong because USING resolves the shared columns, so they are not ambiguous.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-qry-select-join"
+      ],
+      "section": "Data Transformation and Modeling",
+      "verification": {
+        "status": "confirmed",
+        "note": "The JOIN page says with USING, SELECT * shows each join column once first, then the left table's other columns, then the right table's.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q18"
+    },
+    {
+      "type": "single",
+      "objective": "3.2",
+      "prompt": "A data engineer runs `SELECT * FROM stores INNER JOIN regions` and forgets to add an ON or USING clause. `stores` has 10 rows and `regions` has 4 rows. What does Databricks SQL return?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "An error, because INNER JOIN requires join criteria",
+          "correct": false
+        },
+        {
+          "id": "b",
+          "text": "Rows matched on all columns that have the same name in both tables, as with a NATURAL join",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "40 rows, because without join criteria the join behaves as a CROSS JOIN (Cartesian product)",
+          "correct": true
+        },
+        {
+          "id": "d",
+          "text": "10 rows, with NULLs appended for the regions columns",
+          "correct": false
+        }
+      ],
+      "explanation": "The JOIN reference warns that if you omit join_criteria, any join_type behaves like a CROSS JOIN, which returns the Cartesian product: 10 × 4 = 40 rows. The query does not fail, so a is wrong. Matching on columns with the same name happens only when NATURAL is specified explicitly, so b is wrong. Appending NULLs for unmatched rows is outer join behaviour, so d is wrong. Databricks guidance also notes that cross joins are expensive, so join criteria should be checked carefully.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-qry-select-join",
+        "https://docs.databricks.com/aws/en/transform/optimize-joins"
+      ],
+      "section": "Data Transformation and Modeling",
+      "verification": {
+        "status": "confirmed",
+        "note": "The JOIN page warns that omitting join_criteria makes any join_type behave as a CROSS JOIN (Cartesian product).",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q19"
+    },
+    {
+      "type": "single",
+      "objective": "3.3",
+      "prompt": "A data engineer has a PySpark DataFrame `df_customer` and must keep only the rows where `c_nationkey` equals 20 and `c_acctbal` is greater than 1000. Which statement does this?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "`df_customer.filter((col(\"c_nationkey\") == 20) & (col(\"c_acctbal\") > 1000))`",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "`df_customer.filter((col(\"c_nationkey\") == 20) | (col(\"c_acctbal\") > 1000))`",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "`df_customer.select((col(\"c_nationkey\") == 20) & (col(\"c_acctbal\") > 1000))`",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "`df_customer.withColumn(\"c_nationkey\", col(\"c_acctbal\") > 1000).filter(col(\"c_nationkey\") == 20)`",
+          "correct": false
+        }
+      ],
+      "explanation": "filter (or where) keeps only the rows that match a condition. In PySpark, conditions are combined with & for AND and | for OR, and each condition is wrapped in parentheses. Option b uses |, which keeps rows that meet either condition. Option c uses select, which returns one boolean column instead of filtering rows. Option d overwrites c_nationkey with a boolean value, so the later comparison with 20 no longer tests the original nation key.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/pyspark/basics"
+      ],
+      "section": "Data Transformation and Modeling",
+      "verification": {
+        "status": "confirmed",
+        "note": "The page shows df_customer.filter((col(\"c_nationkey\") == 20) & (col(\"c_acctbal\") > 1000)) and says & and | AND and OR conditions.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q20"
+    },
+    {
+      "type": "single",
+      "objective": "3.4",
+      "prompt": "For each customer, a data engineer must produce one array that lists every distinct product category the customer has bought. Repeated categories must appear only once. Which approach does this, and what caveat applies?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Use `collect_list(category)` grouped by customer. It removes duplicates and returns the categories in purchase order.",
+          "correct": false
+        },
+        {
+          "id": "b",
+          "text": "Use `collect_set(category)` grouped by customer. It keeps only unique values, but Spark does not guarantee the order of items in the array.",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "Use `explode(category)` grouped by customer. It turns the values into a deduplicated array.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Use `collect_set(category)` grouped by customer. It returns the unique categories sorted alphabetically.",
+          "correct": false
+        }
+      ],
+      "explanation": "collect_set() gathers only the unique values of a column into an array, so it removes the repeated categories. collect_list() keeps every value, including duplicates. The docs also note that Spark does not guarantee the order of items in the array from either function, so options a and d are wrong because they assume an order. Option c is wrong because explode() does the reverse: it unpacks array or map values into rows.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/semi-structured/complex-types"
+      ],
+      "section": "Data Transformation and Modeling",
+      "verification": {
+        "status": "confirmed",
+        "note": "The page says collect_set collects only unique values and that Spark does not guarantee the order of items from collect_list or collect_set.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q21"
+    },
+    {
+      "type": "single",
+      "objective": "3.5",
+      "prompt": "A data engineer runs a batch INNER sort merge join between two large Delta tables on a cluster that uses the default adaptive query execution (AQE) settings. The Spark UI shows that after the shuffle, the median partition is about 10 MB. One partition is about 200 MB, and its task runs much longer than the others. The final plan shows no SortMergeJoin node with isSkew set to true. What is the most likely reason that AQE did not handle this skew?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "AQE marks a partition as skewed only if it is larger than skewedPartitionFactor (default 5) times the median partition size AND larger than skewedPartitionThresholdInBytes (default 256MB). This 200 MB partition does not pass the 256MB threshold.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "AQE skew join handling is turned off by default, so the engineer must set spark.sql.adaptive.skewJoin.enabled to true.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "AQE can handle skew only in broadcast hash joins, so the sort merge join must first be turned into a broadcast join.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "AQE cannot handle skew on either side of an INNER join, so the engineer must add a skew join hint.",
+          "correct": false
+        }
+      ],
+      "explanation": "The correct answer is (a). The AQE documentation says a partition counts as skewed only when both conditions are true: its size is greater than skewedPartitionFactor (default 5) times the median partition size, and greater than skewedPartitionThresholdInBytes (default 256MB). Here, 200 MB is more than 5 × 10 MB = 50 MB, but it is less than 256MB, so AQE does not treat it as skewed.\n\nWhy the other choices are wrong:\n- (b) spark.sql.adaptive.skewJoin.enabled defaults to true.\n- (c) This is the reverse of the documented behavior. AQE handles skew only in shuffle-based joins (sort merge joins and shuffle hash joins). It never optimizes skew in broadcast joins.\n- (d) For INNER joins, AQE can optimize skew on both the left and right sides. Databricks also recommends AQE skew join handling over the skew join hint.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/optimizations/aqe"
+      ],
+      "section": "Data Transformation and Modeling",
+      "verification": {
+        "status": "confirmed",
+        "note": "The AQE page says a partition is skewed only if it exceeds both skewedPartitionFactor (5) × median and skewedPartitionThresholdInBytes (256MB). Here 200 MB passes the 50 MB factor test but not the 256MB threshold. Skew handling is enabled by default (true). It applies only to shuffle-based joins, not broadcast joins. INNER joins are optimized on both sides, and the page recommends AQE over the skew hint.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q22"
+    },
+    {
+      "type": "single",
+      "objective": "4.2",
+      "prompt": "A data engineer has a parameterized Lakeflow pipeline and wants to run it for 10 different parameter combinations as quickly as possible. They build a Lakeflow Job with a For each task. Its Inputs field lists the 10 combinations, its Concurrency is set to 10, and its nested task is a pipeline task that passes {{input.region}} as a parameter override. The job's max_concurrent_runs is set to 5.\n\nHow will the iterations run?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "All 10 iterations run at the same time, because the For each Concurrency setting overrides the pipeline's limits",
+          "correct": false
+        },
+        {
+          "id": "b",
+          "text": "The iterations run one at a time, because a pipeline can run only one update at a time and a pipeline task inside a For each task is capped to one concurrent iteration",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "Five iterations run at the same time, because the job's max_concurrent_runs limits the For each concurrency",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The job fails validation, because a pipeline task can't be used as the nested task of a For each task",
+          "correct": false
+        }
+      ],
+      "explanation": "The pipeline task documentation says a pipeline can run only one update at a time. A pipeline task inside a For each task is capped to one concurrent iteration, whatever concurrency the loop is configured with. A job with max_concurrent_runs > 1 that contains a pipeline task is also capped to a single concurrent run. So neither the Concurrency value of 10 nor max_concurrent_runs = 5 lets iterations run in parallel. Pipeline tasks are allowed as nested tasks. The only nested task type that is not allowed is another For each task.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/jobs/tasks/pipeline",
+        "https://docs.databricks.com/aws/en/jobs/tasks/for-each"
+      ],
+      "section": "Working with Lakeflow Jobs",
+      "verification": {
+        "status": "confirmed",
+        "note": "The pipeline task page says a pipeline task in a For each task is capped to one concurrent iteration and a pipeline runs one update at a time. The For each page only forbids a nested For each.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q23"
+    },
+    {
+      "type": "multiple",
+      "objective": "4.2",
+      "prompt": "A data engineer adds an existing Lakeflow pipeline to a Lakeflow Job by creating a task of type Pipeline in the Jobs UI and selecting the pipeline from the Pipeline drop-down menu.\n\nWhich TWO settings can the engineer configure on this pipeline task itself? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "An option to trigger a full refresh of the pipeline",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Parameter overrides, entered as key-value pairs in the task's Parameters field",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "The source code files that the pipeline runs",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The cluster size and node type that the pipeline uses for its update",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "A streaming backlog metric threshold that sends a notification when the pipeline falls behind",
+          "correct": false
+        }
+      ],
+      "explanation": "When you configure a pipeline task, you select an existing pipeline. You can then optionally trigger a full refresh and set parameter overrides as key-value pairs in the Parameters field. Source code and compute are not set on the task, because Lakeflow pipelines manage all source code and compute configuration in the pipeline definition. Streaming backlog metric thresholds and notifications are explicitly not supported for pipeline tasks. To monitor backlog, use a SQL alert on the pipeline event log or a pipeline event hook instead.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/jobs/tasks/pipeline"
+      ],
+      "section": "Working with Lakeflow Jobs",
+      "verification": {
+        "status": "confirmed",
+        "note": "The page lists optional full refresh and parameter overrides. It says pipelines manage source and compute, and streaming backlog thresholds aren't supported for pipeline tasks.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q24"
+    },
+    {
+      "type": "single",
+      "objective": "4.1",
+      "prompt": "In a Lakeflow Job, a notebook task named count_rows sets a task value named row_count. When row_count is at least 1000, a notebook task named load_gold should run. Otherwise, a notebook task named notify_low_volume should run instead.\n\nHow should the data engineer configure this branching?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Add an If/else condition task with the condition {{tasks.count_rows.values.row_count}} >= 1000. Make load_gold depend on the condition task's (true) outcome and notify_low_volume depend on its (false) outcome",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Add an If/else condition task with the condition {{tasks.count_rows.values.row_count}} == 1000. Make both downstream tasks depend on the condition task's (true) outcome",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Make both load_gold and notify_low_volume depend directly on count_rows, and set the Run if dependency of notify_low_volume to run when the upstream task fails",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Wrap load_gold in a For each task whose Inputs field is {{tasks.count_rows.values.row_count}}, so that it runs only when rows exist",
+          "correct": false
+        }
+      ],
+      "explanation": "An If/else condition task compares two operands with a boolean operator, and an operand can be a task value. The >= operator does a numeric comparison, so it is the right operator for a threshold check. When you add a task after the condition task, its Depends on field defaults to <task-name> (true), and you choose <task-name> (false) for tasks that should run when the condition is false. The == operator does a string comparison and would only match exactly 1000. Run if dependencies react to upstream success or failure, not to data values. A For each task loops over an array and does not branch on a condition.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/jobs/tasks/if-else"
+      ],
+      "section": "Working with Lakeflow Jobs",
+      "verification": {
+        "status": "confirmed",
+        "note": "The If/else page says >= does a numeric comparison, == does a string comparison, task values can be operands, and dependent tasks pick the true or false outcome.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q25"
+    },
+    {
+      "type": "multiple",
+      "objective": "4.1",
+      "prompt": "A data engineering team is reviewing how failed tasks are retried across their Lakeflow Jobs. Some jobs run on serverless compute, some on classic job compute with a Scheduled trigger, and some use a Continuous trigger. None of the tasks have a retry policy configured explicitly.\n\nWhich TWO statements about the default retry behaviour are correct? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Serverless jobs auto-optimize retries by default",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Continuous jobs use an exponential backoff retry policy",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "Every job retries a failed task three times by default, whatever its compute or trigger type",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The default retry interval is measured from the end of the failed run to the start of the retry",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "Retries can be configured only at the job level, so all tasks in a job share one retry policy",
+          "correct": false
+        }
+      ],
+      "explanation": "The documentation says the default retry behaviour depends on the job configuration. For most configurations, failed tasks are not retried by default. Serverless jobs auto-optimize retries by default, and continuous jobs use an exponential backoff retry policy. There is no universal default of three retries. The retry interval is measured in milliseconds from the start of the failed run to the next retry run, not from its end. Retry policies are configured per task under Advanced task settings.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/jobs/configure-task"
+      ],
+      "section": "Working with Lakeflow Jobs",
+      "verification": {
+        "status": "confirmed",
+        "note": "The configure-task page says serverless jobs auto-optimize retries and continuous jobs use exponential backoff. It says the retry interval runs from the start of the failed run, and retries are set per task.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q26"
+    },
+    {
+      "type": "single",
+      "objective": "4.3",
+      "prompt": "A Lakeflow Job has a file arrival trigger on the Unity Catalog volume path /Volumes/ops/landing/partner/. The partner uploads a batch of about 20 files roughly every 10 minutes, and all files in a batch land within about 30 seconds of each other. Runs often start after the first few files land, so each batch is split across several runs. The team wants each batch processed in a single run.\n\nWhich configuration change meets this requirement?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Set Minimum time between triggers in seconds to 600",
+          "correct": false
+        },
+        {
+          "id": "b",
+          "text": "Set Wait after last change in seconds to 60",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "Change the storage location to /Volumes/ops/landing/partner/*.csv so that only complete files are matched",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Replace the file arrival trigger with a simple schedule that runs every 10 minutes",
+          "correct": false
+        }
+      ],
+      "explanation": "Wait after last change in seconds is a debounce setting. Each new file resets the timer, and a run starts only after the set time passes with no new arrivals. A value of 60 is longer than the 30-second gap between files within a batch and shorter than the 10-minute gap between batches, so each batch is processed in one run. Minimum time between triggers is a cooldown after a run completes, so a run could still start in the middle of a batch. File arrival trigger paths can't contain wildcards. A simple schedule doesn't line up with when batches land, and you can't choose its first run time.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/jobs/file-arrival-triggers"
+      ],
+      "section": "Working with Lakeflow Jobs",
+      "verification": {
+        "status": "confirmed",
+        "note": "The file arrival page describes Wait after last change as debouncing for batches and Minimum time between triggers as a cooldown. It says paths can't contain wildcards.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q27"
+    },
+    {
+      "type": "single",
+      "objective": "4.3",
+      "prompt": "A data engineer adds a table update trigger on the Unity Catalog managed table sales.orders to a Lakeflow Job. The job's Run as field is set to the service principal etl-sp. The engineer has CAN MANAGE on the job and SELECT on the table, but the trigger fails to evaluate and the job never runs, even though sales.orders is updated frequently.\n\nWhat is the most likely fix?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Grant etl-sp SELECT on sales.orders, plus USE CATALOG and USE SCHEMA on its catalog and schema",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Enable file events on the external location, because table update triggers require file events for every table",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Grant etl-sp CAN MANAGE on the job, because the trigger is evaluated with job-level permissions",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Change the trigger to a file arrival trigger on the table's storage path",
+          "correct": false
+        }
+      ],
+      "explanation": "The principal in the job's Run as field must have SELECT on every object the trigger monitors, plus USE CATALOG and USE SCHEMA for Unity Catalog tables. The trigger reads each object's metadata and change history to detect updates. If the Run as principal lacks SELECT, the trigger fails to evaluate and the job doesn't run. Here etl-sp is the Run as principal, so the engineer's own SELECT doesn't help. File events are recommended, but they are required only to monitor more than 10 tables. CAN MANAGE on the job is not what the trigger checks. File arrival trigger paths must not contain external tables or managed locations of catalogs and schemas.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/jobs/trigger-table-update"
+      ],
+      "section": "Working with Lakeflow Jobs",
+      "verification": {
+        "status": "confirmed",
+        "note": "The table update page says the Run as principal needs SELECT on the table plus USE CATALOG and USE SCHEMA, or the trigger fails to evaluate. File events are required only for more than 10 tables.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q28"
+    },
+    {
+      "type": "single",
+      "objective": "4.4",
+      "prompt": "An upstream system writes a daily export at an unpredictable time by overwriting the same file, /Volumes/ops/landing/vendor/daily_export.csv, in a Unity Catalog volume. The volume's external location is not enabled for file events. A Lakeflow Job with a file arrival trigger on /Volumes/ops/landing/vendor/ ran when the file first appeared, but it has not run since, even though the file is overwritten every day. The team wants each export processed soon after it lands, without runs that find nothing new.\n\nWhat is the best change?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Replace the trigger with a simple schedule that runs the job every minute",
+          "correct": false
+        },
+        {
+          "id": "b",
+          "text": "Have the upstream system write each export as a new, uniquely named file (for example, with a date suffix), keep the file arrival trigger, and process new files with Auto Loader",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "Replace the file arrival trigger with a table update trigger on the volume",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Change the trigger path to /Volumes/ops/landing/vendor/daily_export*.csv so that overwrites are detected",
+          "correct": false
+        }
+      ],
+      "explanation": "File arrival triggers start runs only for new files. Overwriting an existing file with one of the same name does not trigger a run, unless the location is enabled for file events and the file's metadata falls outside the rolling retention period. Writing each export as a new, uniquely named file lets the data-driven trigger fire whenever data lands, and Auto Loader then processes the new files incrementally. A one-minute schedule is time-based and would create many runs that find nothing new. Table update triggers monitor tables and views, not volumes. Trigger paths can't contain wildcards.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/jobs/file-arrival-triggers"
+      ],
+      "section": "Working with Lakeflow Jobs",
+      "verification": {
+        "status": "confirmed",
+        "note": "The file arrival page says only new files trigger runs and overwrites don't without file events. It also says Auto Loader processes new files and wildcards aren't allowed. The table update page covers tables, not volumes.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q29"
+    },
+    {
+      "type": "single",
+      "objective": "5.2",
+      "prompt": "A Declarative Automation Bundle defines the job `ingest_job` with `max_concurrent_runs: 10` and a schedule with `pause_status: UNPAUSED`. The `dev` target is configured like this:\n\n```yaml\ntargets:\n  dev:\n    mode: development\n    presets:\n      jobs_max_concurrent_runs: 20\n      trigger_pause_status: PAUSED\n```\n\nThe data engineer runs `databricks bundle deploy -t dev`. How is `ingest_job` configured after the deployment?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Maximum concurrent runs is 10, and the schedule is unpaused",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Maximum concurrent runs is 20, and the schedule is paused",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Maximum concurrent runs is 20, and the schedule is unpaused",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The deployment fails because the presets conflict with the job's own settings",
+          "correct": false
+        }
+      ],
+      "explanation": "The docs give this order of precedence: presets override the default behavior of the deployment mode, and settings on individual resources override the presets. The job sets `max_concurrent_runs: 10` and `pause_status: UNPAUSED` itself, so those values win over `jobs_max_concurrent_runs: 20` and `trigger_pause_status: PAUSED`. Options b and c wrongly let the presets override the job's own settings. Option d is wrong because a conflict like this does not cause an error. It is settled by the precedence rules.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/dev-tools/bundles/deployment-modes"
+      ],
+      "section": "Implementing CI/CD",
+      "verification": {
+        "status": "confirmed",
+        "note": "Deployment-modes page: presets override mode defaults and individual resource settings override presets, with the same 10 vs 20 and UNPAUSED vs PAUSED example.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q30"
+    },
+    {
+      "type": "single",
+      "objective": "5.2",
+      "prompt": "The `prod` target of a Declarative Automation Bundle sets `workspace.host: https://<production-workspace-url>` and does not name a profile. The data engineer's `.databrickscfg` file has two profiles, `prod-admin` and `prod-readonly`. Both have a `host` field that matches this URL.\n\nWhat must the engineer do to deploy to `prod` with the `prod-admin` credentials?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Pass `--profile prod-admin` to the bundle commands",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Do nothing, because the Databricks CLI always picks the first matching profile in `.databrickscfg`",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Set `default: true` on the `prod` target so that the CLI uses the default profile",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Remove the `host` mapping, because a bundle cannot be deployed when more than one profile matches the host",
+          "correct": false
+        }
+      ],
+      "explanation": "When the `host` mapping is set, the Databricks CLI looks for a profile in `.databrickscfg` with a matching host. If more than one profile matches, the docs say you must use the `--profile` option on bundle commands to choose one. Option b is wrong because the CLI does not pick a profile on its own when several match. Option c is wrong because `default: true` only sets the default target and has nothing to do with authentication profiles. Option d is wrong because Databricks recommends the `host` mapping for portable configuration, and the `--profile` flag solves the ambiguity.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/dev-tools/bundles/settings"
+      ],
+      "section": "Implementing CI/CD",
+      "verification": {
+        "status": "confirmed",
+        "note": "Settings page: if multiple profiles with a matching host exist, you must use the --profile option on bundle commands.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q31"
+    },
+    {
+      "type": "single",
+      "objective": "5.1",
+      "prompt": "Two data engineers in the same workspace both develop in one shared Databricks Git folder. Engineer A opens the Git dialog and switches the Git folder from `main` to `feature-x`. Engineer B is editing a notebook in the same Git folder.\n\nWhat happens for Engineer B?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Engineer B's Git folder also switches to `feature-x`, because changing the branch changes it for every user who shares that Git folder",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Engineer B stays on `main`, because each user keeps a separate checked-out branch in a shared Git folder",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Databricks blocks the switch until Engineer B commits and pushes their changes",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Databricks automatically creates a personal copy of the Git folder for Engineer B on `main`",
+          "correct": false
+        }
+      ],
+      "explanation": "The docs warn that if other users have access to a Git folder, changing the branch also changes it for them when they share the same workspace. Option b is wrong because a Git folder has one current branch for everyone, not one per user. Option c is wrong because the switch is not blocked. Uncommitted changes carry over to the new branch if they don't conflict with it. Option d is wrong because Databricks does not create personal copies automatically.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/repos/git-operations-with-repos"
+      ],
+      "section": "Implementing CI/CD",
+      "verification": {
+        "status": "confirmed",
+        "note": "Git dialog section: changing the branch also changes it for other users who share the Git folder, and uncommitted changes carry over, so the switch isn't blocked.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q32"
+    },
+    {
+      "type": "single",
+      "objective": "5.4",
+      "prompt": "A Lakeflow Job with ID `6565621249` was created by hand in the production workspace, and it has a long run history. The team has added a matching definition to their Declarative Automation Bundle under the resource key `nightly_etl`. They want future `databricks bundle deploy -t prod` runs to update this existing job instead of creating a second one.\n\nWhich Databricks CLI command should they run?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "`databricks bundle deployment bind nightly_etl 6565621249 -t prod`",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "`databricks bundle deploy -t prod --force`",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "`databricks bundle deploy -t prod --select nightly_etl`",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Rename the job in the bundle so that its `name` exactly matches the existing job, then run `databricks bundle deploy -t prod`",
+          "correct": false
+        }
+      ],
+      "explanation": "`databricks bundle deployment bind KEY RESOURCE_ID` links a resource defined in the bundle to an existing resource in the workspace. For jobs, the resource ID is the job's numeric ID. Once the job is bound, the next deploy updates it from the bundle configuration. Option b is wrong because `--force` only overrides validations, such as the Git branch check. Option c is wrong because `--select` deploys only the chosen resources, which would still create a new job, and Databricks recommends it only for development. Option d is wrong because bundles track resources by ID, not by name, so a matching name does not link them.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/dev-tools/cli/bundle-commands"
+      ],
+      "section": "Implementing CI/CD",
+      "verification": {
+        "status": "confirmed",
+        "note": "bundle-commands page: 'bundle deployment bind KEY RESOURCE_ID' links a bundle resource to an existing job by numeric ID. Resources aren't matched by name, --force only overrides validations, and --select isn't for production.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q33"
+    },
+    {
+      "type": "multiple",
+      "objective": "5.3",
+      "prompt": "A Declarative Automation Bundle named `sales_etl` has been deployed to the `prod` target. That deployment created the Lakeflow Jobs `daily_load` and `legacy_export`. Each statement below describes a later change followed by another deployment.\n\nWhich TWO statements are correct? (Select TWO.)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "If `legacy_export` is removed from the bundle configuration and the bundle is deployed to `prod` again, the job is removed from the prod workspace.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "If the bundle name is changed from `sales_etl` to `sales_pipeline` and the bundle is deployed to `prod` again, the new deployment is no longer associated with the jobs that were deployed earlier.",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "If `legacy_export` is removed from the bundle configuration, the next deployment leaves the job in place but pauses its schedule.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "If the `name` field of `daily_load` is changed, the next deployment creates a second job, because bundles match resources by name.",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "If `legacy_export` is removed from the bundle configuration, the next deployment fails until the job is deleted manually.",
+          "correct": false
+        }
+      ],
+      "explanation": "A bundle deployment tracks the resources it creates by their IDs, in state stored in the workspace. A resource removed from the configuration is removed from the target workspace if it was deployed before (a). The bundle's identity comes from `root_path`, which defaults to `~/.bundle/${bundle.name}/${bundle.target}`. Changing the bundle name, the target, or the workspace makes the deployment forget its association with earlier resources (b). Option c is wrong because removed resources are deleted, not paused. Option d is wrong because resource names are not used for matching. A renamed resource is updated in place. Option e is wrong because deployments handle removed resources automatically.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/dev-tools/cli/bundle-commands"
+      ],
+      "section": "Implementing CI/CD",
+      "verification": {
+        "status": "confirmed",
+        "note": "bundle-commands page: resources removed from the config are removed from the workspace, and the association is forgotten when the bundle name, target or workspace changes. Resource names aren't used for correlation.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q34"
+    },
+    {
+      "type": "single",
+      "objective": "6.4",
+      "prompt": "A data engineer manages sales.events, a Unity Catalog managed Delta table that is partitioned by (year, month, day). Queries now filter on many different columns, and the access patterns keep changing. The workspace uses Databricks Runtime 18.1. The engineer wants to move the table to liquid clustering, start with the current partition columns as clustering keys, let predictive optimization change the keys over time, and avoid rewriting the table with a CTAS.\n\nWhich statement should the data engineer run?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "ALTER TABLE sales.events REPLACE PARTITIONED BY WITH CLUSTER BY AUTO;",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "ALTER TABLE sales.events CLUSTER BY AUTO;",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "OPTIMIZE sales.events ZORDER BY (year, month, day);",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "CREATE OR REPLACE TABLE sales.events PARTITIONED BY (year, month, day) CLUSTER BY AUTO AS SELECT * FROM sales.events;",
+          "correct": false
+        }
+      ],
+      "explanation": "In Databricks Runtime 18.1 and above, you convert a partitioned Delta table to liquid clustering in place with ALTER TABLE ... REPLACE PARTITIONED BY WITH CLUSTER BY. The AUTO option starts with the current partition columns as the clustering keys and lets predictive optimization adjust them over time. AUTO is only available for Unity Catalog managed tables, which this table is.\n\nWhy the other options are wrong:\n- (b) ALTER TABLE ... CLUSTER BY enables clustering only on unpartitioned tables, because clustering is not compatible with partitioning.\n- (c) ZORDER keeps the partitioned layout, and Databricks recommends liquid clustering instead of ZORDER. Also, predictive optimization does not run ZORDER.\n- (d) Partitioning and clustering cannot be combined in one table, and this option is also the full CTAS rewrite the engineer wants to avoid.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/tables/clustering",
+        "https://docs.databricks.com/aws/en/optimizations/predictive-optimization"
+      ],
+      "section": "Troubleshooting, Monitoring, and Optimization",
+      "verification": {
+        "status": "confirmed",
+        "note": "The clustering page gives ALTER TABLE ... REPLACE PARTITIONED BY WITH CLUSTER BY AUTO for DBR 18.1+ and says AUTO starts from the partition columns for UC managed tables. Plain CLUSTER BY is for unpartitioned tables, clustering is incompatible with partitioning and ZORDER, and predictive optimization skips ZORDER.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q35"
+    },
+    {
+      "type": "multiple",
+      "objective": "6.1",
+      "prompt": "A data engineer owns a daily Lakeflow Jobs job that normally finishes in about 25 minutes. They want the job's Runs tab to make it easy to spot runs that are noticeably slower than usual, without writing any queries.\n\nWhich TWO statements about the job's Runs tab are correct? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "In the matrix view, the height of each job run and task run bar shows the run's duration, so unusually long runs stand out next to earlier runs.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "If the engineer sets an expected completion time for the job, the matrix and list views show a warning when a run's duration exceeds it.",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "A yellow bar in the matrix view means the run took longer than the job's historical average.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The matrix view automatically calculates a rolling average baseline and marks any run above that baseline as Failed.",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "The Finished runs count graph on the job's Runs tab plots each run's duration against the duration of the previous run.",
+          "correct": false
+        }
+      ],
+      "explanation": "Correct answers:\n- (a) The documentation says the height of the job run and task run bars in the matrix view shows run duration, so you can compare runs visually.\n- (b) When you configure an expected completion time, the matrix view and the runs list both show a warning when a run's duration exceeds it.\n\nWhy the other options are wrong:\n- (c) Bar colors show status, not speed. Yellow means waiting for retry, green means successful, red means unsuccessful, pink means skipped, and grey means pending, canceled, or timed out.\n- (d) The UI does not calculate a baseline automatically, and a slow run is not marked Failed.\n- (e) The Finished runs count graph is on the workspace-level Runs tab, not a single job's Runs tab. It shows how many runs finished, by status, not their durations.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/jobs/monitor"
+      ],
+      "section": "Troubleshooting, Monitoring, and Optimization",
+      "verification": {
+        "status": "confirmed",
+        "note": "The monitor page says run bar height shows duration and that a warning appears in the matrix and list views when a run exceeds the expected completion time. Yellow means waiting for retry, and the Finished runs count graph is on the workspace Runs tab.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q36"
+    },
+    {
+      "type": "single",
+      "objective": "6.3",
+      "prompt": "A batch job joins two large tables and then aggregates the result. A data engineer opens the Spark UI and looks at the stage that runs after the shuffle. It has 2,000 tasks, and each task reads only a few KB of shuffle data and finishes in milliseconds. Most of the stage time goes to scheduling and task setup overhead. The SQL plan shows no CustomShuffleReader node with the Coalesced property. The cluster's Spark config includes spark.databricks.optimizer.adaptive.enabled false, left over from an old troubleshooting session.\n\nWhat should the data engineer do to reduce this overhead?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Remove the setting or set spark.databricks.optimizer.adaptive.enabled to true, so adaptive query execution can coalesce the small post-shuffle partitions into partitions of reasonable size.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Increase spark.sql.shuffle.partitions to 8000 so each task processes less data.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Lower spark.sql.adaptive.skewJoin.skewedPartitionFactor so more partitions are split.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Add more worker nodes so the 2,000 tasks can run in fewer waves.",
+          "correct": false
+        }
+      ],
+      "explanation": "Thousands of tiny tasks after a shuffle mean there are too many post-shuffle partitions. The documentation says very small tasks have worse I/O throughput and more scheduling and task setup overhead. AQE fixes this by coalescing small partitions after a shuffle exchange, and when it does, the plan shows a CustomShuffleReader node with the Coalesced property. That node is missing here because AQE was turned off. AQE is on by default, so re-enabling it restores partition coalescing. Setting spark.sql.shuffle.partitions to auto can also help.\n\nWhy the other options are wrong:\n- (b) More shuffle partitions would make the tasks even smaller and the overhead worse.\n- (c) The skew settings split oversized partitions. They do nothing for undersized ones, and they need AQE enabled anyway.\n- (d) More workers add cost but do not remove the per-task overhead of thousands of tiny tasks.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/optimizations/aqe",
+        "https://docs.databricks.com/aws/en/optimizations/spark-ui-guide/"
+      ],
+      "section": "Troubleshooting, Monitoring, and Optimization",
+      "verification": {
+        "status": "confirmed",
+        "note": "The AQE page says AQE is controlled by spark.databricks.optimizer.adaptive.enabled and coalesces small post-shuffle partitions, which shows as a CustomShuffleReader node with the Coalesced property. The skew settings and more shuffle partitions would not fix tiny tasks.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q37"
+    },
+    {
+      "type": "single",
+      "objective": "6.2",
+      "prompt": "A multi-task Lakeflow Jobs job loads several source systems in parallel, and a final publish_reports task depends on all of the load tasks. Last night's run succeeded, but publish_reports started almost two hours later than usual. Every task shows Succeeded. The data engineer wants to see which upstream task held up publish_reports, and how the task durations and overlaps compared within that run.\n\nWhich view should the data engineer use?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The Timeline view on the Job run details page for that run",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "The Top 5 error types table on the workspace Runs tab",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "The Finished runs count graph on the workspace Runs tab",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The Streaming tab in the Spark UI of the cluster that ran publish_reports",
+          "correct": false
+        }
+      ],
+      "explanation": "The Job run details page has Graph, Timeline, and List views. The Timeline view is designed to show which tasks take a long time to complete and how dependencies and overlaps affect the run, so it shows which upstream load task finished late and delayed publish_reports.\n\nWhy the other options are wrong:\n- (b) The Top 5 error types table lists the most common errors from failed runs. Every task in this run succeeded, so it would show nothing useful.\n- (c) The Finished runs count graph counts completed runs by status over time. It does not show task timing within a single run.\n- (d) The Spark UI Streaming tab only appears while a streaming job is running on the compute. It shows streaming metrics, not job task dependencies.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/jobs/monitor"
+      ],
+      "section": "Troubleshooting, Monitoring, and Optimization",
+      "verification": {
+        "status": "confirmed",
+        "note": "The monitor page says the Timeline view helps identify tasks taking long and understand dependencies and overlap. The Top 5 errors table and Finished runs graph are workspace-level run views, not task timing within a run.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q38"
+    },
+    {
+      "type": "single",
+      "objective": "7.1",
+      "prompt": "A partner delivers Avro files to s3://acme-landing/partner_feed/. An external location in Unity Catalog already covers this path. The data engineering team wants to register the existing files as a Unity Catalog table so access is governed centrally. The files must stay in place even if someone drops the table later. Which approach meets these requirements?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Create an external table with CREATE TABLE ... USING AVRO LOCATION 's3://acme-landing/partner_feed/'",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Create a managed table with CREATE TABLE ... USING AVRO and no LOCATION clause, so Unity Catalog picks the storage path",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Create a managed table with CTAS from the Avro files, then run ALTER TABLE ... SET MANAGED on it",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Create an external table, then convert it with ALTER TABLE ... SET MANAGED COPY so the original files are kept",
+          "correct": false
+        }
+      ],
+      "explanation": "External tables accept formats such as Avro, JSON, CSV, Parquet, ORC and Text, and you set their storage location yourself. When you drop an external table, Unity Catalog removes only the metadata and leaves the data files in place. That is why the docs recommend external tables for existing data that managed tables can't use, such as Avro. (b) is wrong because managed tables use only the Delta or Iceberg format, and dropping a managed table deletes its files after the recovery period. (c) is wrong because a CTAS copy ends up as a managed table whose files are deleted when it is dropped. Also, SET MANAGED converts external tables, so running it on a managed table does nothing useful. (d) is wrong for three reasons: SET MANAGED requires a Delta table, MOVE and COPY apply only to foreign tables, and the result would be managed, which breaks the drop requirement.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/tables/external",
+        "https://docs.databricks.com/aws/en/data-governance/unity-catalog/managed-versus-external"
+      ],
+      "section": "Governance and Security",
+      "verification": {
+        "status": "confirmed",
+        "note": "The external table page lists Avro as an external format and says dropping an external table leaves the data files. The managed-versus-external page says managed tables use Delta or Iceberg and delete their files on drop. The convert page says SET MANAGED needs Delta and that MOVE/COPY apply only to foreign tables.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q39"
+    },
+    {
+      "type": "single",
+      "objective": "7.1",
+      "prompt": "A data engineer converted the Unity Catalog external Delta table main.finance.ledger to a managed table with ALTER TABLE main.finance.ledger SET MANAGED; on serverless compute. Predictive optimization is turned off for the catalog main. The team confirms the managed table works and wants to reclaim the storage still used by the old data in the external location. What should the engineer do?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Wait until the 14-day rollback window has passed, then run VACUUM main.finance.ledger",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Do nothing. Databricks deletes the old external data as soon as the SET MANAGED command finishes.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Run DROP TABLE on the original external table name to delete the old files while keeping the managed table",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Run OPTIMIZE main.finance.ledger right away, which removes the old files from the external location",
+          "correct": false
+        }
+      ],
+      "explanation": "After conversion, Databricks keeps the data in the external location for 14 days so you can roll back. With predictive optimization enabled, it deletes this data automatically after 14 days. If predictive optimization is off, you have to run VACUUM on the converted managed table after 14 days (Databricks Runtime 17.3 LTS or above, or serverless). (b) is wrong because the data is not deleted right away; it is kept so the conversion can be rolled back. (c) is wrong because the conversion keeps the same table name, and the table is now managed, so dropping it would delete the managed table. (d) is wrong because the docs name VACUUM, not OPTIMIZE, as the way to reclaim this storage. They also recommend not running OPTIMIZE jobs on the table during conversion.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/tables/convert-to-managed"
+      ],
+      "section": "Governance and Security",
+      "verification": {
+        "status": "confirmed",
+        "note": "The convert page says Databricks keeps the old data for 14 days. If predictive optimization is off, you run VACUUM on the converted table after 14 days (Runtime 17.3 LTS or above, or serverless).",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q40"
+    },
+    {
+      "type": "single",
+      "objective": "7.2",
+      "prompt": "The contractors group currently has SELECT on the Unity Catalog table main.hr.salaries. To block access, a data engineer runs:\n\nDENY SELECT ON TABLE main.hr.salaries TO `contractors`;\n\nThe statement does not work. What is the correct way to remove the group's ability to query the table?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "DENY is not supported by Unity Catalog. Run REVOKE SELECT ON TABLE main.hr.salaries FROM `contractors`;",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Run the DENY statement on SCHEMA main.hr instead, because Unity Catalog supports DENY only at the schema and catalog levels",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Ask a metastore admin to run the DENY statement, because only metastore admins can issue DENY in Unity Catalog",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Run GRANT NO SELECT ON TABLE main.hr.salaries TO `contractors`; to override the existing grant",
+          "correct": false
+        }
+      ],
+      "explanation": "The DENY statement is not supported by Unity Catalog. It applies only to the legacy hive_metastore catalog and its objects. Unity Catalog removes access through REVOKE, which takes a granted privilege away from a principal. (b) is wrong because DENY at the schema or catalog level is also a hive_metastore-only behavior. (c) is wrong because who runs DENY makes no difference; Unity Catalog does not support it. (d) is wrong because GRANT NO SELECT is not valid syntax.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/sql/language-manual/security-deny",
+        "https://docs.databricks.com/aws/en/data-governance/unity-catalog/manage-privileges/"
+      ],
+      "section": "Governance and Security",
+      "verification": {
+        "status": "confirmed",
+        "note": "The DENY page says it is not supported by Unity Catalog and applies only to hive_metastore. The privileges page shows REVOKE as the way to remove a privilege.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q41"
+    },
+    {
+      "type": "single",
+      "objective": "7.2",
+      "prompt": "An internal auditor must review every privilege granted on the Unity Catalog table prod.sales.orders by running SHOW GRANTS ON TABLE prod.sales.orders. The auditor must not be able to grant or revoke privileges on the table. The auditor is not the owner and is not a metastore admin. Which privilege should be granted to the auditor on the table?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "READ METADATA",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "MANAGE",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "SELECT",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "ALL PRIVILEGES",
+          "correct": false
+        }
+      ],
+      "explanation": "These principals can see all grants on an object: metastore admins, the object owner, the owner of the parent catalog or schema, and users with READ METADATA or MANAGE on the object. Of the two privileges, only READ METADATA meets the requirement without allowing the auditor to manage grants. (b) is wrong because MANAGE also lets the user grant and revoke privileges, transfer ownership and delete the object. (c) is wrong because a user without the required permissions sees only their own grants on the object. (d) is wrong because ALL PRIVILEGES does not include READ METADATA or MANAGE, so the auditor would still not see all grants.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/data-governance/unity-catalog/manage-privileges/",
+        "https://docs.databricks.com/aws/en/sql/language-manual/security-grant"
+      ],
+      "section": "Governance and Security",
+      "verification": {
+        "status": "confirmed",
+        "note": "The privileges page says users with READ METADATA or MANAGE on the object can see all grants. Granting needs MANAGE, ownership or admin rights. The GRANT page says ALL PRIVILEGES excludes MANAGE and READ METADATA.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q42"
+    },
+    {
+      "type": "single",
+      "objective": "7.2",
+      "prompt": "A data engineer owns the view prod.reporting.revenue_v. The engineer tries to transfer ownership of the view to the group finance_bi, so its members can edit the definition. The engineer is not a member of finance_bi and is not a metastore admin, and the transfer fails. Which statement explains the failure?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "To prevent privilege escalation, only a metastore admin can transfer view ownership to any principal. Current owners and users with MANAGE can transfer it only to themselves or to a group they belong to.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Views cannot be owned by groups in Unity Catalog. Ownership must always stay with an individual user.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "The engineer also needs ALL PRIVILEGES on the schema prod.reporting before ownership of any object in it can be transferred",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "View ownership can be changed only by changing the run-as user of the pipeline that created the view",
+          "correct": false
+        }
+      ],
+      "explanation": "To prevent privilege escalation, only a metastore admin can transfer ownership of a view, function or model to any user, service principal or group. Current owners and users with MANAGE can transfer ownership only to their own username or to a group they are a member of. The engineer can join finance_bi first or ask a metastore admin. (b) is wrong because the docs recommend transferring view ownership to a group to enable collaborative editing. (c) is wrong because no ALL PRIVILEGES requirement exists, and ALL PRIVILEGES does not include MANAGE. (d) is wrong because changing the run-as user applies to materialized views and streaming tables created by Lakeflow pipelines, not to standard views.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/data-governance/unity-catalog/manage-privileges/"
+      ],
+      "section": "Governance and Security",
+      "verification": {
+        "status": "confirmed",
+        "note": "The privileges page says only a metastore admin can transfer view ownership to any principal. Owners and MANAGE holders can transfer only to themselves or to a group they belong to. The run-as user applies to Lakeflow pipeline materialized views and streaming tables.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q43"
+    },
+    {
+      "type": "single",
+      "objective": "7.3",
+      "prompt": "A data engineer applies a row filter to the table orders, whose region_code column is a STRING:\n\nCREATE FUNCTION region_filter(rc INT) RETURNS BOOLEAN\n  RETURN IF(is_account_group_member('global_sales'), true, rc IS NULL);\nALTER TABLE orders SET ROW FILTER region_filter ON (region_code);\n\nThe session has spark.sql.ansi.enabled = false. Users outside global_sales should see only rows where region_code is NULL, but they see every row and no error is raised. What is the cause, and how should it be fixed?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The STRING values are implicitly cast to INT. Values that can't be cast become NULL with no error, so the filter returns true for every row. Redefine the function parameter as STRING to match the column.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Row filters ignore group membership functions. Replace is_account_group_member() with a mapping table lookup.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "A row filter is applied only after the table is recreated. Run CREATE OR REPLACE TABLE orders to activate it.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Row filters must be written as Python UDFs to evaluate STRING columns. Rewrite the function in Python and apply it directly.",
+          "correct": false
+        }
+      ],
+      "explanation": "If a column's type doesn't match the UDF parameter type, Databricks implicitly casts the value. With ANSI mode disabled, values that can't be cast become NULL silently. Here every region_code becomes NULL, so rc IS NULL is true and all rows are returned. The fix is to declare the parameter as STRING. Databricks also recommends enabling ANSI mode so failed casts raise an error. (b) is wrong because is_account_group_member() is the documented pattern for group-based filters, and the docs prefer simple CASE/IF logic over mapping tables for performance. (c) is wrong because ALTER TABLE ... SET ROW FILTER takes effect on later queries without recreating the table. (d) is wrong because SQL UDFs handle STRING columns. Python logic must also be wrapped in a SQL UDF before you can apply it as a filter.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/data-governance/unity-catalog/filters-and-masks/",
+        "https://docs.databricks.com/aws/en/data-governance/unity-catalog/filters-and-masks/manually-apply"
+      ],
+      "section": "Governance and Security",
+      "verification": {
+        "status": "confirmed",
+        "note": "The filters-and-masks page says that with ANSI mode off, a type mismatch silently casts uncastable values to NULL. It gives this same STRING-vs-INT row filter example and the fix of declaring the parameter as STRING.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q44"
+    },
+    {
+      "type": "multiple",
+      "objective": "7.3",
+      "prompt": "A data engineer who is NOT the owner of the existing table prod.sales.orders must run:\n\nALTER TABLE prod.sales.orders SET ROW FILTER prod.sec.region_filter ON (region);\n\nThe engineer already has USE CATALOG on prod and USE SCHEMA on prod.sales and prod.sec. The statement does not change the table schema. Which TWO additional privilege requirements must be met? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "EXECUTE on the function prod.sec.region_filter",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Both MANAGE and SELECT on the table prod.sales.orders",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "MODIFY on the table prod.sales.orders",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "CREATE TABLE on the schema prod.sales",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "CREATE FUNCTION on the schema prod.sec",
+          "correct": false
+        }
+      ],
+      "explanation": "To assign a filter or mask function to a table, you need EXECUTE on the function plus USE SCHEMA and USE CATALOG on its parents. To add or remove filters or masks on an existing table, you must be the table owner or have both MANAGE and SELECT on the table. (c) is wrong because MODIFY is needed only when the same statement also changes the table schema, such as adding a new masked column. (d) is wrong because CREATE TABLE is needed only when you add a filter while creating a new table. (e) is wrong because the function already exists, so you only need to execute it, not create it.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/data-governance/unity-catalog/filters-and-masks/manually-apply"
+      ],
+      "section": "Governance and Security",
+      "verification": {
+        "status": "confirmed",
+        "note": "The manual-apply page requires EXECUTE on the function. On an existing table you must be the owner or have both MANAGE and SELECT. MODIFY is needed only if the statement also changes the schema, and CREATE TABLE only when creating a new table.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q45"
+    }
+  ]
+}

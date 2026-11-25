@@ -1,0 +1,12 @@
+.venv/
+.vscode/
+__pycache__/
+*.pyc
+
+# Saved attempt reports, retry bank, rotation, flags, history and docs cache.
+results/
+
+# Official exam guides and their verbatim sample questions are the exam
+# provider's copyright: keep your own copy locally, never commit it.
+exams/*/guide.pdf
+exams/*/banks/guide-samples.json

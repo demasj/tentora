@@ -1,0 +1,96 @@
+{
+  "title": "Databricks Certified Data Engineer Associate",
+  "guide": "guide.pdf",
+  "guideVersion": "2026-08-06",
+  "totalQuestions": 45,
+  "unscoredMax": 10,
+  "timeLimitMinutes": 90,
+  "passingScore": 80,
+  "passingScoreNote": "Databricks publishes no pass mark; 70% is the community figure. This pack practices against a stricter 80%.",
+  "sourceDomains": ["docs.databricks.com"],
+  "terminology": [
+    { "old": "Delta Live Tables", "new": "Lakeflow Declarative Pipelines" },
+    { "old": "DLT", "new": "Lakeflow Declarative Pipelines" },
+    { "old": "Databricks Asset Bundles", "new": "Declarative Automation Bundles" },
+    { "old": "Asset Bundle", "new": "Declarative Automation Bundle" },
+    { "old": "Databricks Repos", "new": "Databricks Git folders" },
+    { "old": "Databricks Workflows", "new": "Lakeflow Jobs" }
+  ],
+  "sections": [
+    {
+      "name": "Databricks Intelligence Platform",
+      "weight": 6,
+      "objectives": [
+        { "id": "1.1", "text": "Understand the core components of the Databricks Platform, such as its architecture, Delta Lake, and Unity Catalog." },
+        { "id": "1.2", "text": "Understand Databricks Platform's compute services, including their characteristics, limitations, and cost models, and select the most suitable option for each workload use case." }
+      ]
+    },
+    {
+      "name": "Data Ingestion and Loading",
+      "weight": 21,
+      "objectives": [
+        { "id": "2.1", "text": "Enable and detail data ingestion patterns, including batch, streaming, and incremental loading, and import data from sources such as local files, Lakeflow Connect standard connectors, and Lakeflow Connect managed connectors." },
+        { "id": "2.2", "text": "Use the COPY INTO command to incrementally load files from cloud object storage (ADLS/S3/GCS) into Unity Catalog-governed tables." },
+        { "id": "2.3", "text": "Use Auto Loader with schema enforcement and schema evolution in batch modes (for example, directory listing or file notification) to land data into Unity Catalog-governed tables." },
+        { "id": "2.4", "text": "Configure Lakeflow Connect to reliably ingest data from diverse enterprise sources into Unity Catalog-governed tables." },
+        { "id": "2.5", "text": "Use JDBC/ODBC or REST clients in notebooks to land data into cloud storage or directly into Unity Catalog-governed tables, usually orchestrated and scheduled with Lakeflow Jobs." },
+        { "id": "2.6", "text": "Prioritize between Auto Loader, Lakeflow Connect (standard and managed connectors), partner connectors, and other ingestion methods based on technical requirements such as data volume, ingestion frequency, data types, and governance needs with Unity Catalog." },
+        { "id": "2.7", "text": "Ingest semi-structured and unstructured data (for example, JSON and nested data) via Lakeflow Connect and other managed connectors into Unity Catalog-governed Delta tables." }
+      ]
+    },
+    {
+      "name": "Data Transformation and Modeling",
+      "weight": 22,
+      "objectives": [
+        { "id": "3.1", "text": "Implement data cleaning by reading bronze tables with PySpark/SQL, cleaning nulls, standardizing data types, and writing to new silver tables." },
+        { "id": "3.2", "text": "Combine DataFrames with operations such as Inner join, left join, broadcast join, multiple keys, cross join, union, and union all." },
+        { "id": "3.3", "text": "Manipulate columns, rows, and table structures by adding, dropping, splitting, renaming column names, applying filters, and exploding arrays." },
+        { "id": "3.4", "text": "Perform data deduplication operations and aggregate operations on DataFrames, such as count, approximate count distinct, and mean, summary." },
+        { "id": "3.5", "text": "Understand the basic tuning parameters (spark.sql.shuffle.partitions, spark.default.parallelism, spark.executor/driver.memory, spark.sql.autoBroadcastJoinThreshold) and re-measure the performance." },
+        { "id": "3.6", "text": "Understand the difference between, and how to build, Gold layer objects such as materialized views, views, streaming tables, and tables for BI and analytics teams in Unity Catalog." },
+        { "id": "3.7", "text": "Apply data quality checks and validation rules to ensure reliable Silver and Gold datasets." }
+      ]
+    },
+    {
+      "name": "Working with Lakeflow Jobs",
+      "weight": 16,
+      "objectives": [
+        { "id": "4.1", "text": "Implement control flows (retries and conditional tasks such as branching and looping) using Lakeflow Jobs for pipeline orchestration." },
+        { "id": "4.2", "text": "Configure common tasks (notebook, SQL query, dashboard, and pipeline tasks) and their dependencies using Lakeflow Jobs and its DAG-based task graph." },
+        { "id": "4.3", "text": "Implement job schedules using Lakeflow Jobs with an understanding of trigger types (scheduled, file arrival, and table update)." },
+        { "id": "4.4", "text": "Choose between time-based and data-driven triggers based on data availability and pipeline dependencies." }
+      ]
+    },
+    {
+      "name": "Implementing CI/CD",
+      "weight": 10,
+      "objectives": [
+        { "id": "5.1", "text": "Manage your code development workflow within the Databricks workspace UI, including creating and switching between branches in Databricks Git folders (formerly Databricks Repos), committing and pushing changes, and creating pull requests using Databricks Git integration." },
+        { "id": "5.2", "text": "Understand environment-specific configuration using Declarative Automation Bundle (formerly Databricks Asset Bundles) variables and overrides while promoting the same codebase across dev, test, and prod targets." },
+        { "id": "5.3", "text": "Deploy Declarative Automation Bundles (formerly Databricks Asset Bundles) to package, configure, and promote Lakeflow Jobs, Lakeflow Declarative Pipelines, and other workspace assets across dev, test, and prod environments." },
+        { "id": "5.4", "text": "Understand the Databricks CLI to validate, deploy, and manage Declarative Automation Bundles (formerly Databricks Asset Bundles) and other workspace assets in automated CI/CD workflows." }
+      ]
+    },
+    {
+      "name": "Troubleshooting, Monitoring, and Optimization",
+      "weight": 10,
+      "objectives": [
+        { "id": "6.1", "text": "Identify trends in job performance using the Lakeflow Jobs run history view to compare current execution times against historical baselines." },
+        { "id": "6.2", "text": "Use the Lakeflow Jobs UI to monitor pipeline health by interpreting job statuses, viewing DAG-based task graphs to spot upstream blockers, and tracking pipeline run times and failure rates." },
+        { "id": "6.3", "text": "Identify common performance bottlenecks such as data skew, shuffling, and disk spilling by interpreting stage-level metrics in the Spark UI." },
+        { "id": "6.4", "text": "Understand the features of Liquid Clustering and predictive optimization." },
+        { "id": "6.5", "text": "Diagnose cluster startup failures, library conflicts, and out-of-memory issues." }
+      ]
+    },
+    {
+      "name": "Governance and Security",
+      "weight": 15,
+      "objectives": [
+        { "id": "7.1", "text": "Differentiate between managed and external tables in Unity Catalog and perform basic operations (create, modify, delete, and convert between managed and external tables) on them." },
+        { "id": "7.2", "text": "Configure access controls using the UI and SQL by applying GRANT, REVOKE, and DENY privileges to principals (users, groups, and service principals) at appropriate levels of the security hierarchy." },
+        { "id": "7.3", "text": "Understand column-level masking and row-level security to restrict data visibility based on user groups." },
+        { "id": "7.4", "text": "Understand Unity Catalog ABAC policies to centrally control row-level filtering and column masking for sensitive data." }
+      ]
+    }
+  ]
+}
