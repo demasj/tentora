@@ -1,0 +1,524 @@
+{
+  "title": "Databricks Certified Data Engineer Associate (generated)",
+  "exam": "data-engineer-associate",
+  "source": "json",
+  "generatedAt": "2026-11-22T13:38:54+00:00",
+  "guideVersion": "2026-08-06",
+  "timeLimitMinutes": 90,
+  "passingScore": 80,
+  "sections": [
+    {
+      "name": "Databricks Intelligence Platform",
+      "weight": 6
+    },
+    {
+      "name": "Data Ingestion and Loading",
+      "weight": 21
+    },
+    {
+      "name": "Data Transformation and Modeling",
+      "weight": 22
+    },
+    {
+      "name": "Working with Lakeflow Jobs",
+      "weight": 16
+    },
+    {
+      "name": "Implementing CI/CD",
+      "weight": 10
+    },
+    {
+      "name": "Troubleshooting, Monitoring, and Optimization",
+      "weight": 10
+    },
+    {
+      "name": "Governance and Security",
+      "weight": 15
+    }
+  ],
+  "questions": [
+    {
+      "type": "single",
+      "objective": "1.1",
+      "prompt": "A data engineer creates two Unity Catalog tables, sales.bronze.orders_managed (a managed table) and sales.bronze.orders_ext (an external table whose LOCATION points to an S3 path registered as an external location). Both tables use default settings. A colleague runs DROP TABLE on both by mistake.\n\nWhat happens to the underlying data files?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The managed table can be restored with UNDROP TABLE within the default 7-day recovery period, and its data files are purged after that. The external table's data files stay in S3 until someone deletes them directly.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Both tables' data files are deleted from cloud storage right away, because Unity Catalog manages the lifecycle of every table it governs.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Neither table's data files are deleted. DROP TABLE only removes metadata in Unity Catalog, whatever the table type.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The external table's data files are deleted right away, while the managed table's files stay in the schema's storage location until VACUUM runs.",
+          "correct": false
+        }
+      ],
+      "explanation": "Data files for managed tables are stored in the storage location of the schema or catalog that contains them, and Unity Catalog manages their lifecycle. By default, a dropped managed table can be recovered with UNDROP TABLE for 7 days. After that, an asynchronous purge deletes the files from your cloud tenant. When you drop an external table, Unity Catalog removes only the metadata and does not delete the data in cloud storage, so you have to delete those files yourself. (b) is wrong because Unity Catalog does not manage the data lifecycle of external tables. (c) is wrong because managed table data is purged once the recovery period ends. (d) has the two behaviors backwards, and VACUUM is not what deletes the files of a dropped table.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/tables/managed",
+        "https://docs.databricks.com/aws/en/tables/external"
+      ],
+      "section": "Databricks Intelligence Platform",
+      "verification": {
+        "status": "confirmed",
+        "note": "The managed-tables page says a dropped managed table can be restored with UNDROP for 7 days by default, after which an asynchronous purge deletes its files; the external-tables page says dropping an external table removes only metadata and the files must be deleted directly.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q1"
+    },
+    {
+      "type": "multiple",
+      "objective": "1.1",
+      "prompt": "A security architect is reviewing a Databricks workspace on AWS that uses both classic compute (all-purpose and job clusters) and serverless compute. The architect asks where the different parts of the platform run.\n\nWhich TWO statements are correct? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The control plane, which includes the backend services and the web application, runs in the Databricks account, not in the customer's AWS account.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Classic compute resources run in the customer's AWS account, while serverless compute resources run in a compute layer within the Databricks account.",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "Serverless compute resources run in the customer's AWS account, in the same VPC as classic clusters.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The control plane runs in the customer's AWS account, so that customer data never leaves the customer's cloud account.",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "Both classic and serverless compute run inside the control plane, which is why both are managed by Databricks.",
+          "correct": false
+        }
+      ],
+      "explanation": "The Databricks architecture is split into a control plane and a compute plane. The control plane holds the Databricks-managed backend services, including the web application, and it is located in the Databricks account, not in your cloud account (a). The compute plane is where data is processed. In the classic compute plane, compute runs in your AWS account inside the workspace's network. In the serverless compute plane, compute runs in a compute layer within your Databricks account, in the same region as the workspace (b). (c) is wrong because serverless compute does not run in the customer's account. (d) is wrong because the control plane is in the Databricks account. (e) is wrong because compute runs in the compute plane, which is separate from the control plane.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/getting-started/high-level-architecture"
+      ],
+      "section": "Databricks Intelligence Platform",
+      "verification": {
+        "status": "confirmed",
+        "note": "The architecture page says the control plane is in the Databricks account, classic compute runs in the customer's AWS account, and serverless compute runs in a compute layer within the Databricks account.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q2"
+    },
+    {
+      "type": "single",
+      "objective": "1.2",
+      "prompt": "A data engineering team needs a SQL warehouse for interactive BI queries on large Delta tables. Their workspace is in an AWS region where serverless SQL warehouses are not available. They want the best query performance they can get, including Predictive IO.\n\nWhich SQL warehouse type should they choose, and what trade-off should they expect?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A pro SQL warehouse. It supports Photon and Predictive IO and runs in the customer's AWS account, but it starts in about 4 minutes and does not support Intelligent Workload Management.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "A classic SQL warehouse. It supports Photon, Predictive IO and Intelligent Workload Management, with a startup time of only a few seconds.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "A pro SQL warehouse. It runs in the Databricks account and starts in 2 to 6 seconds, so it behaves the same as serverless.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "A classic SQL warehouse. It is the only non-serverless type that supports Predictive IO, but it lacks Photon.",
+          "correct": false
+        }
+      ],
+      "explanation": "Pro SQL warehouses support Photon and Predictive IO but not Intelligent Workload Management. Their compute runs in your AWS account, they take about 4 minutes to start, and they scale more slowly than serverless. Pro is the recommended choice when serverless is not available in a region. (b) is wrong because classic warehouses support only Photon (no Predictive IO or Intelligent Workload Management), and they also take about 4 minutes to start. (c) is wrong because pro compute runs in the customer's account, and the 2 to 6 second startup applies only to serverless. (d) is wrong because classic warehouses support Photon but not Predictive IO.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/compute/sql-warehouse/warehouse-types"
+      ],
+      "section": "Databricks Intelligence Platform",
+      "verification": {
+        "status": "confirmed",
+        "note": "The warehouse-types page says pro supports Photon and Predictive IO but not Intelligent Workload Management, runs in the customer's AWS account, starts in about 4 minutes, and is the choice when serverless isn't available in a region; classic supports Photon only.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q3"
+    },
+    {
+      "type": "single",
+      "objective": "2.2",
+      "prompt": "A data engineer runs a scheduled COPY INTO statement that loads Parquet files from an ADLS external location into the Unity Catalog table main.finance.ledger. After a bad transformation, the engineer deletes all rows from the table and wants to load every file in the source path again, including files that earlier runs already loaded. Running the same COPY INTO statement again loads no rows.\n\nWhat should the engineer change so that the files are loaded again?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Add COPY_OPTIONS ('force' = 'true') to the COPY INTO statement",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Add COPY_OPTIONS ('mergeSchema' = 'true') to the COPY INTO statement",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Add the VALIDATE ALL clause to the COPY INTO statement",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Run OPTIMIZE on the table before running COPY INTO again",
+          "correct": false
+        }
+      ],
+      "explanation": "COPY INTO is idempotent: it skips files in the source location that it has already loaded. Setting the copy option 'force' = 'true' turns idempotency off, so files are loaded whether or not they were loaded before. mergeSchema only lets the table schema evolve to match the incoming data. VALIDATE checks the data but does not write it to the table. OPTIMIZE compacts data files and does nothing to COPY INTO's record of loaded files.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/sql/language-manual/delta-copy-into",
+        "https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/copy-into/"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "The COPY INTO reference says setting force to true turns idempotency off so files load even if they were loaded before; mergeSchema only lets the schema evolve and VALIDATE checks data without writing it.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q4"
+    },
+    {
+      "type": "multiple",
+      "objective": "2.2",
+      "prompt": "A data engineer wants COPY INTO to infer the schema of a new Unity Catalog table from JSON files in S3, instead of writing the column list by hand. The engineer runs:\n\nCREATE TABLE IF NOT EXISTS main.raw.events;\n\nCOPY INTO main.raw.events\nFROM 's3://landing/events/'\nFILEFORMAT = JSON\nFORMAT_OPTIONS ('mergeSchema' = 'true', 'multiLine' = 'true')\nCOPY_OPTIONS ('mergeSchema' = 'true');\n\nWhich TWO statements are correct? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The table's schema is inferred during COPY INTO because mergeSchema is set to true in COPY_OPTIONS",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Until COPY INTO inserts data, the empty placeholder table cannot be used with INSERT INTO or MERGE INTO",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "CREATE TABLE fails because Unity Catalog tables must declare at least one column",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Each run of the COPY INTO statement reloads every file in the path, so the job must remove processed files",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "Analysts can query the placeholder table as soon as it is created, and it returns the inferred columns with zero rows",
+          "correct": false
+        }
+      ],
+      "explanation": "On Databricks Runtime 11.3 LTS and above, you can create an empty placeholder Delta table with no column definitions. COPY INTO then infers its schema when mergeSchema is set to true in COPY_OPTIONS. The placeholder table cannot be used outside COPY INTO: INSERT INTO and MERGE INTO are not supported on it. It becomes queryable only after COPY INTO inserts data. So the CREATE TABLE statement is valid, and the table is not queryable straight away. COPY INTO is idempotent and skips files it has already loaded, so processed files do not need to be removed.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/copy-into/",
+        "https://docs.databricks.com/aws/en/sql/language-manual/delta-copy-into"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "The COPY INTO page says you can create empty placeholder Delta tables whose schema is inferred when mergeSchema is true in COPY_OPTIONS, that INSERT INTO and MERGE INTO are not supported on them, that they become queryable only after COPY INTO inserts data, and that the statement is idempotent.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q5"
+    },
+    {
+      "type": "single",
+      "objective": "2.3",
+      "prompt": "A data engineer runs an Auto Loader stream that writes CSV files into a Unity Catalog table. No schema is given, cloudFiles.schemaLocation is set, and cloudFiles.schemaEvolutionMode keeps its default. A source system starts sending files with a new column, discount_code. The stream then stops with an UnknownFieldException.\n\nWhat happened, and what is the recommended way to handle it?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Auto Loader added discount_code to the schema and then stopped the stream on purpose. Restarting the stream continues with the updated schema, so Databricks recommends running the stream in Lakeflow Jobs so it restarts automatically.",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Auto Loader rejected the file and left the schema unchanged. The engineer must remove the file from the source path before restarting the stream.",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Auto Loader put discount_code into the _rescued_data column and stopped. The engineer must delete the schema location to clear the error.",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The schema location is corrupted. The engineer must delete the checkpoint and the schema location and reprocess all files from the beginning.",
+          "correct": false
+        }
+      ],
+      "explanation": "When no schema is provided, the default schema evolution mode is addNewColumns. In this mode, Auto Loader first adds the new columns to the schema and then fails the stream with an UnknownFieldException. When the stream restarts, it continues with the updated schema, and existing columns keep their data types. Databricks recommends running the stream as a Lakeflow Job so that it restarts automatically. Removing the offending file applies to failOnNewColumns mode. Writing new columns to _rescued_data without changing the schema is rescue mode, and the stream does not fail in that mode. Nothing is corrupted, so there is no need to reset the checkpoint.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/schema"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "The schema page says that in the default addNewColumns mode the stream fails with UnknownFieldException after Auto Loader adds the new columns, picks up the updated schema on restart, and that Databricks recommends Lakeflow Jobs for automatic restarts.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q6"
+    },
+    {
+      "type": "single",
+      "objective": "2.3",
+      "prompt": "A data engineer uses Auto Loader to load JSON files into a Unity Catalog table that downstream reports depend on. The requirements are:\n- the job runs once an hour from Lakeflow Jobs, processes the files that have arrived, then stops so it does not keep compute running\n- the table schema must never change and the job must never fail because of new fields\n- any unexpected fields must still be kept for later review\n\nWhich configuration meets these requirements?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Use trigger(availableNow=True) and set cloudFiles.schemaEvolutionMode to rescue",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Use trigger(processingTime='1 hour') and set cloudFiles.schemaEvolutionMode to addNewColumns",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Use trigger(availableNow=True) and set cloudFiles.schemaEvolutionMode to failOnNewColumns",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Use trigger(availableNow=True) and set cloudFiles.schemaEvolutionMode to none, with no rescued data column",
+          "correct": false
+        }
+      ],
+      "explanation": "Databricks recommends lowering compute costs by scheduling Auto Loader as batch jobs in Lakeflow Jobs with Trigger.AvailableNow. The query processes all files that arrived before it started, then stops. In rescue mode, Auto Loader never evolves the schema and the stream does not fail because of schema changes. New columns are stored in the rescued data column. A processingTime trigger keeps the stream running, which is especially expensive in directory listing mode. addNewColumns changes the schema and fails the stream. failOnNewColumns fails the stream. none ignores new columns and does not keep their data unless a rescued data column is set.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/schema",
+        "https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/auto-loader/production"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "The production page recommends scheduling Auto Loader as batch jobs in Lakeflow Jobs with Trigger.AvailableNow, and the schema page says rescue mode never evolves the schema, never fails the stream on schema changes, and stores new columns in the rescued data column.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q7"
+    },
+    {
+      "type": "multiple",
+      "objective": "2.5",
+      "prompt": "A Lakeflow Jobs task runs a notebook that uses spark.read.format('jdbc') to copy a 400-million-row orders table from a PostgreSQL database into a Unity Catalog table each night. The read is slow because a single thread pulls all the data. The DBA warns that the database must not be overloaded.\n\nWhich TWO changes follow Databricks guidance for speeding up the read? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Set partitionColumn to a column with a uniformly distributed range of values, ideally indexed in the source database, and set lowerBound and upperBound",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "Set numPartitions to a moderate value, for example close to the cluster's number of executor cores, and avoid values above about 50",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "Set numPartitions to several thousand so each query against the database returns only a few rows",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Set fetchSize to 1 so each round trip uses as little memory as possible",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "Put the username and password in the JDBC URL so the driver does not need to look up secrets for each partition",
+          "correct": false
+        }
+      ],
+      "explanation": "By default, a JDBC read uses a single thread. You get parallel reads by setting partitionColumn (a column with a uniformly distributed range of values) together with lowerBound, upperBound and numPartitions. An index on the partition column in the source database makes the queries faster. Very high numPartitions values are discouraged: values above 50 can overwhelm the remote database, and on small clusters numPartitions can be matched to the executor cores. A very low fetchSize causes high latency because of the many round trips. Credentials belong in Databricks secrets, not in the JDBC URL.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/connect/external-systems/jdbc"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "The JDBC page says partitionColumn needs a uniformly distributed range of values (an indexed column speeds up queries), suggests matching numPartitions to executor cores on small clusters, warns against values above 50, says a low fetchSize causes high latency, and recommends secrets for credentials.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q8"
+    },
+    {
+      "type": "multiple",
+      "objective": "2.4",
+      "prompt": "A data engineer sets up a Lakeflow Connect managed connector to replicate change data from an on-premises SQL Server database into Unity Catalog streaming tables. The setup creates an ingestion gateway and an ingestion pipeline.\n\nWhich TWO statements about these components are correct? (Select TWO)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "The ingestion gateway runs on classic compute as a continuous pipeline and stages snapshot and change data in a Unity Catalog volume",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "The ingestion pipeline runs only on serverless compute, does not support continuous mode, and is usually triggered on a schedule",
+          "correct": true
+        },
+        {
+          "id": "c",
+          "text": "To save cost, the gateway can be stopped between scheduled runs of the ingestion pipeline without risking lost changes",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The ingestion pipeline reads directly from SQL Server's change tables, and the gateway is only used for the first snapshot",
+          "correct": false
+        },
+        {
+          "id": "e",
+          "text": "The staging location can be a foreign catalog created with Lakehouse Federation that points to the source database",
+          "correct": false
+        }
+      ],
+      "explanation": "For database connectors, the gateway runs on classic compute and pulls snapshot and change data from the source into a Unity Catalog staging volume. It has to run continuously to capture changes before the source truncates its change logs. Stopping it can drop changes and force a full refresh. The ingestion pipeline loads the staged data from the volume into the destination streaming tables. It runs only on serverless compute, does not support continuous mode, and is triggered by a scheduled job. The staging catalog cannot be a foreign catalog.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/sql-server-pipeline",
+        "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "The SQL Server pipeline page says the gateway runs on classic compute as a continuous pipeline that stages data in a volume and must not be stopped manually, the ingestion pipeline runs only on serverless compute without continuous mode and is triggered by a scheduled job, and the staging catalog can't be a foreign catalog.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q9"
+    },
+    {
+      "type": "single",
+      "objective": "2.6",
+      "prompt": "A company wants to bring Salesforce objects into Unity Catalog-governed tables for analytics. The small data team does not want to write or maintain code for source authentication, API changes, retries, incremental change capture or schema evolution, and the pipelines must be governed by Unity Catalog.\n\nWhich ingestion approach best fits these requirements?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A Lakeflow Connect managed connector for Salesforce",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "A notebook that calls the Salesforce REST API with the requests library, scheduled in Lakeflow Jobs",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Exporting Salesforce objects to CSV in cloud storage each night and loading them with COPY INTO",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "An Auto Loader stream that points directly at the Salesforce instance URL",
+          "correct": false
+        }
+      ],
+      "explanation": "Lakeflow Connect managed connectors are the most automated ingestion option and cover popular SaaS sources such as Salesforce. They handle source-specific authentication, CDC, edge cases, long-term API maintenance, automatic retries and automatic schema evolution, and the ingestion pipelines they create are governed by Unity Catalog. Databricks advises starting with the most managed option that supports the source. A custom REST notebook or a CSV export with COPY INTO would make the team build and maintain the logic it wants to avoid. Auto Loader reads files from cloud object storage, not SaaS APIs.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/",
+        "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "The ingestion overview says Databricks offers fully managed connectors for enterprise apps like Salesforce, adding source-specific authentication, CDC and automated retries, and recommends starting with the most managed layer; the Lakeflow Connect page says these pipelines are governed by Unity Catalog.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q10"
+    },
+    {
+      "type": "single",
+      "objective": "2.6",
+      "prompt": "A data engineer must ingest clickstream events continuously from an Amazon Kinesis data stream into a Unity Catalog streaming table. The team wants to define the ingestion declaratively and is willing to write some code for it. The data engineer follows Databricks' guidance to start with the most managed option that supports the source.\n\nWhich approach should the data engineer use?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "A Lakeflow Connect standard connector: read the Kinesis stream in Lakeflow Declarative Pipelines (or Structured Streaming) to write to the streaming table",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "COPY INTO, pointing directly at the Kinesis stream ARN",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "The upload UI for local files, run each hour",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "Auto Loader with cloudFiles.useNotifications set to true, pointing at the Kinesis stream",
+          "correct": false
+        }
+      ],
+      "explanation": "Databricks lists Amazon Kinesis under the standard (SQL and Spark API) ingestion options, which are Structured Streaming, Lakeflow Declarative Pipelines and Databricks SQL. Kinesis is not listed among the managed connectors. The guidance is to start with the most managed layer and move down a layer when a source is not supported, so Lakeflow Declarative Pipelines is the right choice for declarative, continuous ingestion. COPY INTO and Auto Loader load files from cloud object storage, not event streams. Auto Loader's file notification mode only changes how it discovers files. Manual uploads of local files are not continuous ingestion.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/ingestion/"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "The ingestion overview lists Amazon Kinesis under Structured Streaming, Lakeflow pipelines and Databricks SQL sources (not under managed connectors) and recommends starting with the most managed layer and moving down when a source isn't supported.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q11"
+    },
+    {
+      "type": "single",
+      "objective": "2.1",
+      "prompt": "A data engineer writes this SQL in a Lakeflow Declarative Pipelines pipeline to ingest Parquet files that land continuously in a Unity Catalog volume:\n\nCREATE OR REFRESH STREAMING TABLE main.raw.orders\nAS SELECT * FROM STREAM read_files(\n  '/Volumes/main/raw/landing/orders/',\n  format => 'parquet');\n\nWhich statement correctly describes this ingestion pattern?",
+      "choices": [
+        {
+          "id": "a",
+          "text": "In a streaming table query, read_files uses Auto Loader, so each pipeline update processes newly arrived files incrementally",
+          "correct": true
+        },
+        {
+          "id": "b",
+          "text": "The STREAM keyword is optional, and leaving it out still gives incremental Auto Loader ingestion",
+          "correct": false
+        },
+        {
+          "id": "c",
+          "text": "Running the cell interactively in a notebook ingests the files straight away, without creating a pipeline",
+          "correct": false
+        },
+        {
+          "id": "d",
+          "text": "The statement runs COPY INTO behind the scenes, so the files must be listed explicitly with a FILES clause",
+          "correct": false
+        }
+      ],
+      "explanation": "When read_files is used in a streaming table query, it uses Auto Loader, and the STREAM keyword is required. This gives incremental ingestion: new files are picked up as they arrive. In streaming queries, the schema is inferred from a sample of the data and can evolve. Databricks presents CREATE STREAMING TABLE as the recommended alternative to COPY INTO for incremental SQL ingestion, and the statement does not use a FILES clause. Lakeflow Declarative Pipelines code is not meant to run interactively. Running it in a notebook cell only checks the syntax, so a pipeline is needed to process the data.",
+      "sources": [
+        "https://docs.databricks.com/aws/en/sql/language-manual/functions/read_files",
+        "https://docs.databricks.com/aws/en/ingestion/cloud-object-storage/onboard-data"
+      ],
+      "section": "Data Ingestion and Loading",
+      "verification": {
+        "status": "confirmed",
+        "note": "The read_files page says read_files uses Auto Loader in a streaming table query and that the STREAM keyword is required, and the onboarding page says pipeline code in a notebook cell only checks syntax and does not run query logic.",
+        "checkedAt": "2026-11-22"
+      },
+      "id": "q12"
+    }
+  ]
+}

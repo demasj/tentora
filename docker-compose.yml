@@ -1,0 +1,14 @@
+services:
+  tentora:
+    build: .
+    image: tentora-web
+    container_name: tentora
+    # Only reachable from this machine — your attempts stay private.
+    ports:
+      - "127.0.0.1:${EXAM_WEB_PORT:-8080}:8080"
+    user: "${EXAM_UID:-1000}:${EXAM_GID:-1000}"
+    volumes:
+      - ./exams:/app/exams:ro         # exam profiles + question banks (incl. `make generate` output)
+      - ./results:/app/results        # reports, retry bank, sessions — shared with `make take/retry`
+      - /etc/localtime:/etc/localtime:ro   # report timestamps in your local time
+    restart: unless-stopped
