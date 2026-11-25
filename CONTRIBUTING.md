@@ -28,5 +28,5 @@ that shows the correct answer. Or fix it in a pull request.
 
 ## Adding an exam
 
-See "Adding another exam" in the [README](README.md). Commit `profile.json` and
+See [Adding another exam](docs/question-generation.md#adding-another-exam). Commit `profile.json` and
 the banks, not `guide.pdf`.

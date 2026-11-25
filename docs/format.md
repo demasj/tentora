@@ -1,9 +1,9 @@
 # Open exam format (JSON)
 
-This is the authoritative, easy-to-author format the app is guaranteed to
-support. VCE (`.vce`) import is best-effort; this JSON format is the stable
-path. Validate imports against a schema (zod in the app) and fail with a clear
-per-question error rather than silently dropping questions.
+The open JSON format of every bank in `exams/<slug>/banks/`. Hand-written and
+generated banks use the same format. Run `make validate EXAM=<slug>` after you
+change a bank: it reports a clear error per question instead of silently
+dropping it.
 
 ## Top-level shape
 
