@@ -1,0 +1,39 @@
+name: Wrong or outdated question
+description: A question's answer, explanation or product name is wrong according to the official docs.
+labels: [question-content]
+body:
+  - type: input
+    id: exam
+    attributes:
+      label: Exam slug
+      placeholder: data-engineer-associate
+    validations:
+      required: true
+  - type: input
+    id: question
+    attributes:
+      label: Bank file and question id
+      placeholder: exams/data-engineer-associate/banks/generated-2.json — Q17
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong?
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Official doc page that shows the correct answer
+      description: Only the exam provider's official docs (the profile's sourceDomains).
+      placeholder: https://docs.databricks.com/...
+    validations:
+      required: true
+  - type: checkboxes
+    id: nda
+    attributes:
+      label: Confirmation
+      options:
+        - label: This report contains no real exam questions or content covered by a candidate agreement.
+          required: true
